@@ -28,14 +28,11 @@ function(_,                tools,        ActionTimer,        actionHelper,      
       var actionQueue = tools.deepCopy(actions);
       var step = 0;
       while(actionQueue.length){
-        var continu = true;
-        while(continu){
-          // TODO: move this into ActionTimer.prototype
-          (function a(){
-            var action = actionQueue.splice(0, 1)[0];
-            continu = action.continues;
-            actionTimers.push(new ActionTimer(action, step));
-          })();
+        var continues = true;
+        while(continues){
+          var action = actionQueue.splice(0, 1)[0];
+          continues = action.continues;
+          actionTimers.push(new ActionTimer(action, step));
         }
         step++;
       }
