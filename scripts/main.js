@@ -1,10 +1,12 @@
-requirejs(['./algorithms/bubblesort', './lib/d3', './lib/underscore', './util/actionHelper', './util/constants'],
-function(   bs,                        d3,         _,                  actionHelper,          constants) {
-    var actionsInLimbo = [];
+requirejs(['./algorithms/bubblesort', './lib/d3', './lib/underscore', './util/actionHelper', './util/actionTimer'],
+function(   bs,                        d3,         _,                  actionHelper,          ActionTimer) {
+    var actionTimers = [];
 
     function play(){
-      if(actionsInLimbo.length){
-        alert('TODO');
+      if(actionTimers.length){
+        _.each(actionTimers, function(timer){
+          timer.resume();
+        });
       } else {
         var data = [20, 60, 10, 50, 90, 30];
 
@@ -36,33 +38,31 @@ function(   bs,                        d3,         _,                  actionHel
             (function a(){
               var action = actions.splice(0, 1)[0];
               continu = action.continues;
-              actionsInLimbo.push(setTimeout(function(){
-                if(action.type === 'primarySelect'){
-                  actionHelper.select('#circle-'+action.value);
-                } else if(action.type === 'secondarySelect') {
-                  actionHelper.select('#circle-'+action.value, null, true);
-                } else if(action.type === 'swap'){
-                  actionHelper.swap('#circle-'+action.value[0], '#circle-'+action.value[1]);
-                } else if(action.type === 'deselect'){
-                  actionHelper.deselect('#circle-'+action.value);
-                }
-              }, step*constants.stepInterval));
+              actionTimers.push(new ActionTimer(action, step));
             })();
           }
           step++;
         }
+        actionTimers[actionTimers.length-1].continues = true;
+        actionTimers.push(new ActionTimer(actionHelper.createAction('end', {clearTimers: clearTimers}), step))
       }
     }
 
     function pause(){
-      _.each(actionsInLimbo, function(action){
-        clearTimeout(action);
+      _.each(actionTimers, function(timer){
+        timer.pause();
       });
     }
 
     function stop(){
-      pause();
-      actionsInLimbo = [];
+      _.each(actionTimers, function(timer){
+        timer.stop();
+      });
+      clearTimers();
+    }
+
+    function clearTimers(){
+      actionTimers = [];
     }
 
     document.getElementById('play').addEventListener('click', play, false);
