@@ -1,4 +1,9 @@
 define({
-  stepInterval: 850,
-  transitionDuration: 600
+  stepInterval: 500,
+  transitionDuration: 400,
+  defaultColor: 'black',
+  bubblesort: {
+    primaryColor: 'red',
+    secondaryColor: 'blue'
+  }
 });
