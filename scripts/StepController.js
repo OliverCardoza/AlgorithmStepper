@@ -1,22 +1,15 @@
-define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'algorithms/bubblesort', 'svgController'],
-function(_,                tools,        ActionTimer,        bubblesort,              svgController){
+define(['lib/underscore', 'util/StepTimer', 'algorithms/bubblesort', 'svgController'],
+function(_,                StepTimer,        bubblesort,              svgController){
+  // TODO: separate algorithm from actions
   return function StepController(algorithm){
     var actions;
-    var actionTimers = [];
+    var stepTimers = [];
     var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
     var self = this;
 
-    switch(algorithm){
-      case 'bubbleSort':
-        actions = bubblesort.init({list: data}).sort();
-        break;
-      default:
-        throw new Error('Bad algorithm name.');
-    }
-
     this.play = function(){
-      if(actionTimers.length){
-        _.each(actionTimers, function(timer){
+      if(stepTimers.length){
+        _.each(stepTimers, function(timer){
           timer.resume();
         });
         return;
@@ -25,37 +18,44 @@ function(_,                tools,        ActionTimer,        bubblesort,        
       svgController.clear();
       svgController.init(data);
 
-      var actionQueue = tools.deepCopy(actions);
-      var step = 0;
-      while(actionQueue.length){
-        var continues = true;
-        while(continues){
-          var action = actionQueue.splice(0, 1)[0];
-          continues = action.continues;
-          actionTimers.push(new ActionTimer(action, step));
+      // refactor after looking up underscore methods
+      var steps = [];
+      _.each(actions, function(action){
+        if(!steps[action.step]){
+          steps[action.step] = [];
         }
-        step++;
-      }
-      // Add finishing action to last step which will clear the timers
-      actionTimers[actionTimers.length-1].continues = true;
-      actionTimers.push(new ActionTimer(svgController.createAction('end', {clearTimers: self.clearTimers}), step));
+        steps[action.step].push(action);
+      });
+
+      _.each(steps, function(actions, step){
+        stepTimers.push(new StepTimer(actions, step));
+      });
     };
     
     this.pause = function(){
-      _.each(actionTimers, function(timer){
+      _.each(stepTimers, function(timer){
         timer.pause();
       });
     };
 
     this.stop = function(){
-      _.each(actionTimers, function(timer){
+      _.each(stepTimers, function(timer){
         timer.stop();
       });
       self.clearTimers();
     };
 
     this.clearTimers = function(){
-      actionTimers = [];
+      stepTimers = [];
     };
+
+    switch(algorithm){
+      case 'bubbleSort':
+        actions = bubblesort.init({list: data}).sort();
+        break;
+      default:
+        throw new Error('Bad algorithm name.');
+    }
+    actions.push(svgController.createAction(actions[actions.length-1].step, 'end', {clearTimers: self.clearTimers}));
   };
 });

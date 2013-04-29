@@ -2,16 +2,17 @@
 // Original Source: http://stackoverflow.com/questions/3969475/javascript-pause-settimeout
 define(['util/constants', 'svgController'],
 function(constants,        svgController){
-  return function ActionTimer(action, step){
+  return function StepTimer(actions, step){
     var timerId;
     var start;
     var remaining = step*constants.stepInterval;
-    var action = action;
+    var actions = actions;
     var state;
 
     this.execute = function(){
-      svgController.execute(action);
-    }
+      svgController.execute(actions);
+      state = 'done'
+    };
 
     this.pause = function() {
       if(state === 'run'){
@@ -34,8 +35,8 @@ function(constants,        svgController){
         window.clearTimeout(timerId);
         state = 'stop';
       }
-    }
+    };
 
     this.resume();
-  }
+  };
 });

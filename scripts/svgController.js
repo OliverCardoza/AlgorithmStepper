@@ -1,5 +1,5 @@
-define(['lib/d3', 'util/constants'],
-function(d3,       constants){
+define(['lib/d3', 'lib/underscore', 'util/constants'],
+function(d3,       _,                constants){
   var svg = d3.select('svg');
   var scalingFactor;
 
@@ -21,71 +21,50 @@ function(d3,       constants){
           return val*0.5;
         })
         .attr("id", function(val){
-          return "circle-" + val;
+          return 'd'+val;
         });
   }
 
-  function execute(action){
-    if(action.type === 'primarySelect'){
-      select('#circle-'+action.value);
-    } else if(action.type === 'secondarySelect') {
-      select('#circle-'+action.value, null, true);
-    } else if(action.type === 'swap'){
-      swap('#circle-'+action.value[0], '#circle-'+action.value[1]);
-    } else if(action.type === 'deselect'){
-      deselect('#circle-'+action.value);
-    } else if(action.type === 'end'){
-      // clear action timers
-      action.value.clearTimers();
-    }
-    action.type = 'finished';
-  }
-
-  // Begin Cut+Paste from actionHelper
-  var primaryColor = 'red';
-  var secondaryColor = 'blue';
-  var defaultColor = 'black';
-
-  var currentPrimary = null;
-  var currentSecondary = null;
-
-  function transitionColor(element, color){
+  function setColor(element, color){
     element.transition().duration(constants.transitionDuration).style('fill', color);
   }
 
-  function select(id, keepPrevious, secondary){
-    var deselectPrevious = !keepPrevious && ((!secondary && currentPrimary) || (secondary && currentSecondary));
-    if(deselectPrevious){
-      transitionColor(secondary?currentSecondary:currentPrimary, defaultColor);
-    }
-    if(secondary){
-      currentSecondary = d3.select(id);
-      transitionColor(currentSecondary, secondaryColor);
-    } else {
-      currentPrimary = d3.select(id);
-      transitionColor(currentPrimary, primaryColor);
-    }
+  function swapColorAndPosition(e1, e2){
+    var x1 = e1.attr('cx');
+    var x2 = e2.attr('cx');
+    var y1 = e1.attr('cy');
+    var y2 = e2.attr('cy');
+    var c1 = e1.style('fill');
+    var c2 = e2.style('fill');
+
+    e1.transition()
+      .attr('cx', x2)
+      .attr('cy', y2)
+      .style('fill', c2)
+      .duration(constants.transitionDuration);
+    e2.transition()
+      .attr('cx', x1)
+      .attr('cy', y1)
+      .style('fill', c1)
+      .duration(constants.transitionDuration);
   }
 
-  function deselect(id){
-    transitionColor(d3.select(id), defaultColor);
+  function execute(actions){
+    _.each(actions, function(action){
+      if(action.type === 'setColor'){
+        setColor(d3.select('#d'+action.params.datum), action.params.color);
+      } else if(action.type === 'swapColorAndPosition'){
+        swapColorAndPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
+      } else if(action.type === 'end'){
+        // clear action timers
+        action.params.clearTimers();
+      }
+    });
   }
 
-  function swap(){
-    var x1 = currentPrimary.attr('cx');
-    var x2 = currentSecondary.attr('cx');
-    currentPrimary.transition().attr('cx', x2).style('fill', secondaryColor).duration(constants.transitionDuration);
-    currentSecondary.transition().attr('cx', x1).style('fill', primaryColor).duration(constants.transitionDuration);
-
-    var tmp = currentSecondary;
-    currentSecondary = currentPrimary;
-    currentPrimary = tmp;
+  function createAction(step, type, params){
+    return { step: step, type: type, params: params };
   }
-
-  function createAction(type, value, continues){
-    return { type: type, value: value, continues: !!continues};
-  }
-  // End Cut+Paste from actionHelper
 
   return {
     clear: clear,
