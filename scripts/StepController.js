@@ -1,5 +1,5 @@
-define(['lib/underscore', 'util/StepTimer', 'algorithms/bubblesort', 'svgController'],
-function(_,                StepTimer,        bubblesort,              svgController){
+define(['lib/underscore', 'util/StepTimer', 'algorithms/bubbleSort', 'svgController'],
+function(_,                StepTimer,        bubbleSort,              svgController){
   // TODO: separate algorithm from actions
   return function StepController(algorithm){
     var actions;
@@ -51,7 +51,7 @@ function(_,                StepTimer,        bubblesort,              svgControl
 
     switch(algorithm){
       case 'bubbleSort':
-        actions = bubblesort(data, true);
+        actions = bubbleSort(data, true);
         break;
       default:
         throw new Error('Bad algorithm name.');

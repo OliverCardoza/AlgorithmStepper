@@ -25,7 +25,7 @@ function(svgController,   constants){
 
     addAction('setColor', {
       datum: datum,
-      color: isPrimary?constants.bubblesort.primaryColor:constants.bubblesort.secondaryColor
+      color: isPrimary?constants.bubbleSort.primaryColor:constants.bubbleSort.secondaryColor
     });
 
     if(isPrimary){
