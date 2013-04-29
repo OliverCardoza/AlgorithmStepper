@@ -1,11 +1,10 @@
-define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort', 'SvgController'],
-function(_,                tools,        ActionTimer,        actionHelper,        bubblesort,              SvgController){
+define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort', 'svgController'],
+function(_,                tools,        ActionTimer,        actionHelper,        bubblesort,              svgController){
   return function StepController(algorithm){
     var actions;
     var actionTimers = [];
     var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
     var self = this;
-    var svgController = new SvgController();
 
     switch(algorithm){
       case 'bubbleSort':
@@ -25,6 +24,7 @@ function(_,                tools,        ActionTimer,        actionHelper,      
 
       svgController.clear();
       svgController.init(data);
+
       var actionQueue = tools.deepCopy(actions);
       var step = 0;
       while(actionQueue.length){
@@ -36,6 +36,7 @@ function(_,                tools,        ActionTimer,        actionHelper,      
         }
         step++;
       }
+      // Add finishing action to last step which will clear the timers
       actionTimers[actionTimers.length-1].continues = true;
       actionTimers.push(new ActionTimer(actionHelper.createAction('end', {clearTimers: self.clearTimers}), step));
     };
