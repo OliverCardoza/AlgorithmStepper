@@ -5,6 +5,7 @@ function(d3,       _,                ActionTimer,        actionHelper,        bu
     var algorithm = algorithm;
     var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
     var svg = d3.select('svg');
+    var self = this;
 
     var scalingFactor = (svg.attr('width')-100)/data.length;
 
@@ -18,7 +19,7 @@ function(d3,       _,                ActionTimer,        actionHelper,        bu
 
       var actions = bubblesort.init({list: data}).sort(); // TODO: separate algorithm selector
 
-      svg.selectAll('circle').remove(); // TODO: conglomerate
+      svg.selectAll('circle').remove(); // TODO: lookup D3 way to chain these two commands without repeating the attr's
       svg.selectAll("circle")
           .data(data)
         .enter().append("circle")
@@ -47,7 +48,7 @@ function(d3,       _,                ActionTimer,        actionHelper,        bu
         step++;
       }
       actionTimers[actionTimers.length-1].continues = true;
-      actionTimers.push(new ActionTimer(actionHelper.createAction('end', {clearTimers: this.clearTimers}), step));
+      actionTimers.push(new ActionTimer(actionHelper.createAction('end', {clearTimers: self.clearTimers}), step));
     };
     
     this.pause = function(){
@@ -60,7 +61,7 @@ function(d3,       _,                ActionTimer,        actionHelper,        bu
       _.each(actionTimers, function(timer){
         timer.stop();
       });
-      this.clearTimers();
+      self.clearTimers();
     };
 
     this.clearTimers = function(){
