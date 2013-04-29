@@ -1,13 +1,12 @@
-define(['lib/d3', 'lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort'],
-function(d3,       _,                tools,         ActionTimer,        actionHelper,        bubblesort){
+define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort', 'SvgController'],
+function(_,                tools,        ActionTimer,        actionHelper,        bubblesort,              SvgController){
   return function StepController(algorithm){
     var actions;
     var actionTimers = [];
     var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
-    var svg = d3.select('svg');
     var self = this;
+    var svgController = new SvgController();
 
-    var scalingFactor = (svg.attr('width')-100)/data.length;
     switch(algorithm){
       case 'bubbleSort':
         actions = bubblesort.init({list: data}).sort();
@@ -23,22 +22,10 @@ function(d3,       _,                tools,         ActionTimer,        actionHe
         });
         return;
       }
-      var actionQueue = tools.deepCopy(actions);
-      svg.selectAll('circle').remove(); // TODO: lookup D3 way to chain these two commands without repeating the attr's
-      svg.selectAll("circle")
-          .data(data)
-        .enter().append("circle")
-          .attr("cy", svg.attr('height')/2)
-          .attr("cx", function(val, i){
-            return scalingFactor*i+50;
-          })
-          .attr("r", function(val){
-            return val*0.5;
-          })
-          .attr("id", function(val){
-            return "circle-" + val;
-          });
 
+      svgController.clear();
+      svgController.init(data);
+      var actionQueue = tools.deepCopy(actions);
       var step = 0;
       while(actionQueue.length){
         var continu = true;
