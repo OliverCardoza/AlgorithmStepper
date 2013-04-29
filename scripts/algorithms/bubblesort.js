@@ -3,9 +3,11 @@ function(actionHelper){
     var list;
     var sortAscending;
 
+    // TODO: change to constructor
     function init(data){
         list = data.list.slice();
         sortAscending = (data.sortAscending === undefined) ? true : data.sortAscending;
+        return this;
     }
 
     function sort(){
