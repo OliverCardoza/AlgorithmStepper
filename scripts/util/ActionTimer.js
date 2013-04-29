@@ -1,7 +1,7 @@
 // Collaborator: Tim Down
 // Original Source: http://stackoverflow.com/questions/3969475/javascript-pause-settimeout
-define(['util/actionHelper', 'util/constants', 'svgController'],
-function(actionHelper,        constants,        svgController){
+define(['util/constants', 'svgController'],
+function(constants,        svgController){
   return function ActionTimer(action, step){
     var timerId;
     var start;

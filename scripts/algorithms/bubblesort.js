@@ -1,5 +1,5 @@
-define(['util/actionHelper'],
-function(actionHelper){
+define(['svgController'],
+function(svgController){
     var list;
     var sortAscending;
 
@@ -17,20 +17,20 @@ function(actionHelper){
         var innerMax;
         var actions = [];
         for(outer=0, outerMax=list.length-2; outer<=outerMax; outer++){
-            actions.push(actionHelper.createAction('primarySelect', list[outer], true));
+            actions.push(svgController.createAction('primarySelect', list[outer], true));
             for(inner=outer+1, innerMax=list.length-1; inner<=innerMax; inner++){
-                actions.push(actionHelper.createAction('secondarySelect', list[inner]));
+                actions.push(svgController.createAction('secondarySelect', list[inner]));
                 var outOfOrder = (sortAscending && list[outer]>list[inner]) || (!sortAscending && list[outer]<list[inner]);
                 if(outOfOrder){
                     var tmp = list[outer];
                     list[outer] = list[inner];
                     list[inner] = tmp;
-                    actions.push(actionHelper.createAction('swap', [list[outer], list[inner]]));
+                    actions.push(svgController.createAction('swap', [list[outer], list[inner]]));
                 }
             }
         }
-        actions.push(actionHelper.createAction('deselect', list[outerMax], true));
-        actions.push(actionHelper.createAction('deselect', list[innerMax]));
+        actions.push(svgController.createAction('deselect', list[outerMax], true));
+        actions.push(svgController.createAction('deselect', list[innerMax]));
         return actions;
     }
 

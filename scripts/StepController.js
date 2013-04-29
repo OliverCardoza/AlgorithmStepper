@@ -1,5 +1,5 @@
-define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort', 'svgController'],
-function(_,                tools,        ActionTimer,        actionHelper,        bubblesort,              svgController){
+define(['lib/underscore', 'util/tools', 'util/ActionTimer', 'algorithms/bubblesort', 'svgController'],
+function(_,                tools,        ActionTimer,        bubblesort,              svgController){
   return function StepController(algorithm){
     var actions;
     var actionTimers = [];
@@ -38,7 +38,7 @@ function(_,                tools,        ActionTimer,        actionHelper,      
       }
       // Add finishing action to last step which will clear the timers
       actionTimers[actionTimers.length-1].continues = true;
-      actionTimers.push(new ActionTimer(actionHelper.createAction('end', {clearTimers: self.clearTimers}), step));
+      actionTimers.push(new ActionTimer(svgController.createAction('end', {clearTimers: self.clearTimers}), step));
     };
     
     this.pause = function(){
