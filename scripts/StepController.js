@@ -51,7 +51,7 @@ function(_,                StepTimer,        bubblesort,              svgControl
 
     switch(algorithm){
       case 'bubbleSort':
-        actions = bubblesort.init({list: data}).sort();
+        actions = bubblesort(data, true);
         break;
       default:
         throw new Error('Bad algorithm name.');

@@ -1,8 +1,6 @@
 define(['svgController', 'util/constants'],
 function(svgController,   constants){
     var actions;
-    var list;
-    var sortAscending;
     var step;
 
     var currentPrimary;
@@ -12,71 +10,66 @@ function(svgController,   constants){
       actions.push(svgController.createAction(step, command, params));
     }
 
-    function deselect(index){
+    function deselect(datum){
       addAction('setColor', {
-        datum: list[index],
+        datum: datum,
         color: constants.defaultColor
       });
     }
 
-    function select(index, primary){
-      var deselectPrev = (primary&&(currentPrimary!==undefined)) || (!primary&&(currentSecondary!==undefined));
+    function select(datum, isPrimary){
+      var deselectPrev = (isPrimary&&(currentPrimary!==undefined)) || (!isPrimary&&(currentSecondary!==undefined));
       if(deselectPrev){
-        deselect(primary?currentPrimary:currentSecondary);
+        deselect(isPrimary?currentPrimary:currentSecondary);
       }
 
       addAction('setColor', {
-        datum: list[index],
-        color: primary?constants.bubblesort.primaryColor:constants.bubblesort.secondaryColor
+        datum: datum,
+        color: isPrimary?constants.bubblesort.primaryColor:constants.bubblesort.secondaryColor
       });
 
-      if(primary){
-        currentPrimary = index;
+      if(isPrimary){
+        currentPrimary = datum;
       } else {
-        currentSecondary = index;
+        currentSecondary = datum;
       }
     }
 
     function swap(primary, secondary){
-      addAction('swapColorAndPosition', [list[primary], list[secondary]]);
+      addAction('swapColorAndPosition', [primary, secondary]);
+      currentPrimary = secondary;
+      currentSecondary = primary;
     }
 
-    // TODO: don't need both init+sort
-    function init(data){
+    return function sort(list, ascending){
         actions = [];
         step = 0;
-        list = data.list.slice();
-        sortAscending = (data.sortAscending === undefined) ? true : data.sortAscending;
-        return this;
-    }
+        currentPrimary = undefined;
+        currentSecondary = undefined;
 
-    function sort(){
+        list = list.slice(); // make a copy
+        ascending = (ascending === undefined) ? true : ascending;
         var outer;
         var inner;
         var outerMax;
         var innerMax;
         for(outer=0, outerMax=list.length-2; outer<=outerMax; outer++){
-            select(outer, true);
+            select(list[outer], true);
             for(inner=outer+1, innerMax=list.length-1; inner<=innerMax; inner++){
-                select(inner, false);
+                select(list[inner], false);
                 step++
-                var outOfOrder = (sortAscending && list[outer]>list[inner]) || (!sortAscending && list[outer]<list[inner]);
+                var outOfOrder = (ascending && list[outer]>list[inner]) || (!ascending && list[outer]<list[inner]);
                 if(outOfOrder){
+                    swap(list[outer], list[inner]);
                     var tmp = list[outer];
                     list[outer] = list[inner];
                     list[inner] = tmp;
-                    swap(outer, inner);
                     step++;
                 }
             }
         }
-        deselect(outerMax);
-        deselect(innerMax);
+        deselect(list[outerMax]);
+        deselect(list[innerMax]);
         return actions;
     }
-
-    return {
-        init: init,
-        sort: sort
-    };
 });
