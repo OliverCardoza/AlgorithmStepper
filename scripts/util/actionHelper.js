@@ -4,28 +4,29 @@ function(d3,       constants){
   var secondaryColor = 'blue';
   var defaultColor = 'black';
 
-
   var currentPrimary = null;
   var currentSecondary = null;
 
-  function primarySelect(id, keepPrevious){
-    if(!keepPrevious && currentPrimary){
-      currentPrimary.style('fill', defaultColor);
-    }
-    currentPrimary = d3.select(id);
-    currentPrimary.style('fill', primaryColor);
+  function transitionColor(element, color){
+    element.transition().duration(constants.transitionDuration).style('fill', color);
   }
 
-  function secondarySelect(id, keepPrevious){
-    if(!keepPrevious && currentSecondary){
-      currentSecondary.style('fill', defaultColor);
+  function select(id, keepPrevious, secondary){
+    var deselectPrevious = !keepPrevious && ((!secondary && currentPrimary) || (secondary && currentSecondary));
+    if(deselectPrevious){
+      transitionColor(secondary?currentSecondary:currentPrimary, defaultColor);
     }
-    currentSecondary = d3.select(id);
-    currentSecondary.style('fill', secondaryColor);
+    if(secondary){
+      currentSecondary = d3.select(id);
+      transitionColor(currentSecondary, secondaryColor);
+    } else {
+      currentPrimary = d3.select(id);
+      transitionColor(currentPrimary, primaryColor);
+    }
   }
 
   function deselect(id){
-    d3.select(id).style('fill', defaultColor);
+    transitionColor(d3.select(id), defaultColor);
   }
 
   function swap(){
@@ -44,8 +45,7 @@ function(d3,       constants){
   }
 
   return {
-    primarySelect: primarySelect,
-    secondarySelect: secondarySelect,
+    select: select,
     createAction: createAction,
     swap: swap,
     deselect: deselect

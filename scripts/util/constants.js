@@ -1,4 +1,4 @@
 define({
   stepInterval: 850,
-  transitionDuration: 750
+  transitionDuration: 600
 });

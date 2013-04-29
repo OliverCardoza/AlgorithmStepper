@@ -22,9 +22,8 @@ function(   bs,                        d3,         _,                  actionHel
           return "circle-" + val;
         });
 
-    var actionIdx = 0;
     var step = 0;
-    while(actionIdx < actions.length){
+    while(actions.length){
       var continu = true;
       while(continu){
         (function a(){
@@ -32,9 +31,9 @@ function(   bs,                        d3,         _,                  actionHel
           continu = action.continues;
           setTimeout(function(){
             if(action.type === 'primarySelect'){
-              actionHelper.primarySelect('#circle-'+action.value);
+              actionHelper.select('#circle-'+action.value);
             } else if(action.type === 'secondarySelect') {
-              actionHelper.secondarySelect('#circle-'+action.value);
+              actionHelper.select('#circle-'+action.value, null, true);
             } else if(action.type === 'swap'){
               actionHelper.swap('#circle-'+action.value[0], '#circle-'+action.value[1]);
             } else if(action.type === 'deselect'){
