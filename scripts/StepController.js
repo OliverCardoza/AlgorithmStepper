@@ -1,4 +1,4 @@
-define(['lib/d3', 'lib/underscore', 'util/tools', 'util/actionTimer', 'util/actionHelper', 'algorithms/bubblesort'],
+define(['lib/d3', 'lib/underscore', 'util/tools', 'util/ActionTimer', 'util/actionHelper', 'algorithms/bubblesort'],
 function(d3,       _,                tools,         ActionTimer,        actionHelper,        bubblesort){
   return function StepController(algorithm){
     var actions;

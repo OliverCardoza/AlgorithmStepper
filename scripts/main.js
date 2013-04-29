@@ -1,4 +1,4 @@
-requirejs(['stepController'],
+requirejs(['StepController'],
 function(   StepController) {
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
@@ -23,4 +23,3 @@ function(   StepController) {
   document.getElementById('bubbleSort')
     .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false); // TODO, what is third argument of addEventListener?
 });
-// TODO: rename modules that are classes with capitals
