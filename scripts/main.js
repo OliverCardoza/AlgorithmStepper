@@ -6,14 +6,13 @@ function(   bs,                        d3,         _,                  actionHel
     var actions = bs.sort();
 
     var svg = d3.select('svg');
-    var scalingFactor = (svg.attr('width')-100)/_.max(data);
+    var scalingFactor = (svg.attr('width')-100)/data.length;
     svg.selectAll("circle")
         .data(data)
       .enter().append("circle")
         .attr("cy", 150)
         .attr("cx", function(val, i){
-          //return Math.ceil(val*scalingFactor);
-          return ((svg.attr('width')-100)/data.length)*i+50;
+          return scalingFactor*i+50;
         })
         .attr("r", function(val){
           return val*0.5;
