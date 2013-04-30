@@ -39,7 +39,7 @@ function(   StepController,   bubbleSort,             selectionSort,            
   }
 
   document.getElementById('bubbleSort')
-    .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false); // TODO, what is third argument of addEventListener?
+    .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false);
   document.getElementById('selectionSort')
     .addEventListener('click', function(){ setNewAlgorithm('selectionSort'); }, false);
   document.getElementById('insertionSort')

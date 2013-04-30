@@ -11,7 +11,7 @@ function(svgController,   constants){
   function selectPrimary(datum){
     addAction('setColorAndShift', {
       datum: datum,
-      color: constants.selectionSort.primaryColor,
+      color: constants.colors.primary,
       xUnits: 0,
       yUnits: -1
     });
@@ -19,7 +19,7 @@ function(svgController,   constants){
   function deselectPrimary(datum, unitsToLeft){
     addAction('setColorAndShift', {
       datum: datum,
-      color: constants.selectionSort.sortedColor,
+      color: constants.colors.sorted,
       xUnits: -1*unitsToLeft,
       yUnits: 1
     });
@@ -36,7 +36,7 @@ function(svgController,   constants){
   function selectSorted(datum){
     addAction('setColor', {
       datum: datum,
-      color: constants.selectionSort.sortedColor
+      color: constants.colors.sorted
     });
   }
 
