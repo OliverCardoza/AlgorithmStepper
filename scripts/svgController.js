@@ -2,6 +2,8 @@ define(['lib/d3', 'lib/underscore', 'util/constants'],
 function(d3,       _,                constants){
   var svg = d3.select('svg');
   var scalingFactor;
+  var xUnit;
+  var yUnit;
 
   function clear(){
     svg.selectAll('circle').remove();
@@ -9,6 +11,10 @@ function(d3,       _,                constants){
 
   function init(data){
     scalingFactor = (svg.attr('width')-100)/data.length;
+
+    // TODO: define better coordinate system for shifts
+    yUnit = 100;
+    xUnit = scalingFactor;
 
     svg.selectAll("circle")
         .data(data)
@@ -27,6 +33,25 @@ function(d3,       _,                constants){
 
   function setColor(element, color){
     element.transition().duration(constants.transitionDuration).style('fill', color);
+  }
+
+  function setColorAndShift(element, color, xUnits, yUnits){
+    var x = Number(element.attr('cx'));
+    var y = Number(element.attr('cy'));
+    element.transition()
+      .attr('cx', x+xUnits*xUnit)
+      .attr('cy', y+yUnits*yUnit)
+      .style('fill', color)
+      .duration(constants.transitionDuration);
+  }
+
+  function shift(element, xUnits, yUnits){
+    var x = Number(element.attr('cx'));
+    var y = Number(element.attr('cy'));
+    element.transition()
+      .attr('cx', x+xUnits*xUnit)
+      .attr('cy', y+yUnits*yUnit)
+      .duration(constants.transitionDuration);
   }
 
   function swapColorAndPosition(e1, e2){
@@ -76,6 +101,10 @@ function(d3,       _,                constants){
       } else if(action.type === 'end'){
         // clear action timers
         action.params.clearTimers();
+      } else if(action.type === 'setColorAndShift'){
+        setColorAndShift(d3.select('#d'+action.params.datum), action.params.color, action.params.xUnits, action.params.yUnits);
+      } else if(action.type === 'shift'){
+        shift(d3.select('#d'+action.params.datum), action.params.xUnits, action.params.yUnits);
       }
     });
   }

@@ -25,8 +25,10 @@ function(   StepController,   bubbleSort,             selectionSort,            
         break;
       case 'insertionSort':
         actions = insertionSort(data, true);
+        break;
       default:
         throw new Error('Bad algorithm name.');
+        break;
     }
 
     controller = new StepController(data, actions);

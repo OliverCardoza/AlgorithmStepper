@@ -1,57 +1,49 @@
+// TODO: move step++ increments into base actions and out of algorithm if possible
 define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
   var step;
-  var currentPrimary;
-  var currentSecondary;
 
   function addAction(command, params){
     actions.push(svgController.createAction(step, command, params));
   }
 
-  function deselect(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.defaultColor
-    });
-  }
-
-  function select(datum, color){
-    addAction('setColor', {
-      datum: datum,
-      color: color
-    });
-  }
-
   function selectPrimary(datum){
-    if(currentPrimary!==undefined){
-      deselect(currentPrimary);
-    }
-    select(datum, constants.selectionSort.primaryColor);
-    currentPrimary = datum;
+    addAction('setColorAndShift', {
+      datum: datum,
+      color: constants.selectionSort.primaryColor,
+      xUnits: 0,
+      yUnits: -1
+    });
+  }
+  function deselectPrimary(datum, unitsToLeft){
+    addAction('setColorAndShift', {
+      datum: datum,
+      color: constants.selectionSort.sortedColor,
+      xUnits: -1*unitsToLeft,
+      yUnits: 1
+    });
   }
 
-  function selectSecondary(datum){
-    if(currentSecondary!==undefined){
-      deselect(currentSecondary);
-    }
-    select(datum, constants.selectionSort.secondaryColor);
-    currentSecondary = datum;
+  function shift(datum){
+    addAction('shift', {
+      datum: datum,
+      xUnits: 1,
+      yUnits: 0
+    });
   }
 
   function selectSorted(datum){
-    select(datum, constants.selectionSort.sortedColor);
-    currentPrimary = undefined;
-    currentSecondary = undefined;
-  }
-
-  function swap(primary, secondary){
-    addAction('swapPosition', [primary, secondary]);
-    currentPrimary = secondary;
-    currentSecondary = primary;
+    addAction('setColor', {
+      datum: datum,
+      color: constants.selectionSort.sortedColor
+    });
   }
 
   return function sort(list, ascending){
+    actions = [];
+    step = 0;
+
     list = list.slice(); // make a copy
     ascending = (ascending === undefined) ? true : ascending;
 
@@ -59,17 +51,26 @@ function(svgController,   constants){
     var inner;
     var outerMax;
 
+    selectSorted(list[0]);
+    step++;
     for(outer=1, outerMax=list.length-1; outer<=outerMax; outer++){
       var tmp = list[outer];
+      selectPrimary(tmp);
+      step++;
       for(inner=outer-1; inner>=0; inner--){
         var outOfOrder = (ascending && tmp<list[inner]) || (!ascending && tmp>list[inner]);
         if(outOfOrder){
           list[inner+1] = list[inner];
+          shift(list[inner]);
+          step++;
         } else {
           break;
         }
       }
       list[inner+1] = tmp;
+      deselectPrimary(tmp, outer-inner-1);
+      step++;
     }
+    return actions;
   };
 });

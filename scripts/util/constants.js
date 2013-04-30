@@ -1,4 +1,5 @@
 define({
+  // TODO: conglomerate constants between sorts
   stepInterval: 1000,
   transitionDuration: 900,
   defaultColor: 'black',
