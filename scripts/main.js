@@ -1,5 +1,5 @@
-requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort'],
-function(   StepController,   bubbleSort,             selectionSort,             insertionSort) {
+requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort'],
+function(   StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort) {
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
@@ -26,6 +26,9 @@ function(   StepController,   bubbleSort,             selectionSort,            
       case 'insertionSort':
         actions = insertionSort(data, true);
         break;
+      case 'combSort':
+        actions = combSort(data, true);
+        break;
       default:
         throw new Error('Bad algorithm name.');
         break;
@@ -44,4 +47,6 @@ function(   StepController,   bubbleSort,             selectionSort,            
     .addEventListener('click', function(){ setNewAlgorithm('selectionSort'); }, false);
   document.getElementById('insertionSort')
     .addEventListener('click', function(){ setNewAlgorithm('insertionSort'); }, false);
+  document.getElementById('combSort')
+    .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
 });
