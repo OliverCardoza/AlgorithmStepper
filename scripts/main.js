@@ -1,5 +1,5 @@
-requirejs(['StepController', 'algorithms/bubbleSort'],
-function(   StepController,   bubbleSort) {
+requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort'],
+function(   StepController,   bubbleSort,             selectionSort) {
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
@@ -19,6 +19,9 @@ function(   StepController,   bubbleSort) {
       case 'bubbleSort':
         actions = bubbleSort(data, true);
         break;
+      case 'selectionSort':
+        actions = selectionSort(data, true);
+        break;
       default:
         throw new Error('Bad algorithm name.');
     }
@@ -32,4 +35,6 @@ function(   StepController,   bubbleSort) {
 
   document.getElementById('bubbleSort')
     .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false); // TODO, what is third argument of addEventListener?
+  document.getElementById('selectionSort')
+    .addEventListener('click', function(){ setNewAlgorithm('selectionSort'); }, false);
 });
