@@ -12,7 +12,7 @@ function(svgController,   constants){
   function deselect(datum){
     addAction('setColor', {
       datum: datum,
-      color: constants.defaultColor
+      color: constants.colors.default
     });
   }
 
@@ -27,7 +27,7 @@ function(svgController,   constants){
     if(currentPrimary!==undefined){
       deselect(currentPrimary);
     }
-    select(datum, constants.selectionSort.primaryColor);
+    select(datum, constants.colors.primary);
     currentPrimary = datum;
   }
 
@@ -35,12 +35,12 @@ function(svgController,   constants){
     if(currentSecondary!==undefined){
       deselect(currentSecondary);
     }
-    select(datum, constants.selectionSort.secondaryColor);
+    select(datum, constants.colors.secondary);
     currentSecondary = datum;
   }
 
   function selectSorted(datum){
-    select(datum, constants.selectionSort.sortedColor);
+    select(datum, constants.colors.sorted);
     currentPrimary = undefined;
     currentSecondary = undefined;
   }
