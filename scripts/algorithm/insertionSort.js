@@ -61,19 +61,15 @@ function(svgController,   constants){
 
     for(outer=1, outerMax=list.length-1; outer<=outerMax; outer++){
       var tmp = list[outer];
-      var changesMade = false;
       for(inner=outer-1; inner>=0; inner--){
         var outOfOrder = (ascending && tmp<list[inner]) || (!ascending && tmp>list[inner]);
         if(outOfOrder){
           list[inner+1] = list[inner];
-          changesMade = true;
         } else {
           break;
         }
       }
-      if(changesMade){
-        list[inner+1] = tmp;
-      }
+      list[inner+1] = tmp;
     }
   };
 });
