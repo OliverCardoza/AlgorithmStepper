@@ -1,4 +1,3 @@
-// TODO: move step++ increments into base actions and out of algorithm if possible
 define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
