@@ -1,5 +1,5 @@
-requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort'],
-function(   StepController,   bubbleSort,             selectionSort) {
+requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort'],
+function(   StepController,   bubbleSort,             selectionSort,             insertionSort) {
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
@@ -15,6 +15,7 @@ function(   StepController,   bubbleSort,             selectionSort) {
       stopButton.removeEventListener('click', controller.stop);
     }
     var actions;
+    // TODO: add ability for user to input sort parameters (asc/desc to start)
     switch(name){
       case 'bubbleSort':
         actions = bubbleSort(data, true);
@@ -22,8 +23,12 @@ function(   StepController,   bubbleSort,             selectionSort) {
       case 'selectionSort':
         actions = selectionSort(data, true);
         break;
+      case 'insertionSort':
+        actions = insertionSort(data, true);
+        break;
       default:
         throw new Error('Bad algorithm name.');
+        break;
     }
 
     controller = new StepController(data, actions);
@@ -34,7 +39,9 @@ function(   StepController,   bubbleSort,             selectionSort) {
   }
 
   document.getElementById('bubbleSort')
-    .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false); // TODO, what is third argument of addEventListener?
+    .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false);
   document.getElementById('selectionSort')
     .addEventListener('click', function(){ setNewAlgorithm('selectionSort'); }, false);
+  document.getElementById('insertionSort')
+    .addEventListener('click', function(){ setNewAlgorithm('insertionSort'); }, false);
 });

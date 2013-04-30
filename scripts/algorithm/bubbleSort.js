@@ -13,7 +13,7 @@ function(svgController,   constants){
   function deselect(datum){
     addAction('setColor', {
       datum: datum,
-      color: constants.defaultColor
+      color: constants.colors.default
     });
   }
 
@@ -25,7 +25,7 @@ function(svgController,   constants){
 
     addAction('setColor', {
       datum: datum,
-      color: isPrimary?constants.bubbleSort.primaryColor:constants.bubbleSort.secondaryColor
+      color: isPrimary?constants.colors.primary:constants.colors.secondary
     });
 
     if(isPrimary){
