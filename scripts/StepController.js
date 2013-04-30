@@ -1,10 +1,7 @@
-define(['lib/underscore', 'util/StepTimer', 'algorithms/bubblesort', 'svgController'],
-function(_,                StepTimer,        bubblesort,              svgController){
-  // TODO: separate algorithm from actions
-  return function StepController(algorithm){
-    var actions;
+define(['lib/underscore', 'util/StepTimer', 'svgController'],
+function(_,                StepTimer,        svgController){
+  return function StepController(data, actions){
     var stepTimers = [];
-    var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
     var self = this;
 
     this.play = function(){
@@ -49,13 +46,6 @@ function(_,                StepTimer,        bubblesort,              svgControl
       stepTimers = [];
     };
 
-    switch(algorithm){
-      case 'bubbleSort':
-        actions = bubblesort.init({list: data}).sort();
-        break;
-      default:
-        throw new Error('Bad algorithm name.');
-    }
     actions.push(svgController.createAction(actions[actions.length-1].step, 'end', {clearTimers: self.clearTimers}));
   };
 });

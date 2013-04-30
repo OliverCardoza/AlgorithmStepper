@@ -3,6 +3,8 @@ function(_){
 
   // Probably really bad. Underscore chose not to implement due to complexity. Look into 'Lodash'
   // Will work for an Array of Objects
+  // The need for this code has been removed. Delete/refactor after research
+  // TODO: research
   function deepCopy(val){
     var rVal;
       if(_.isObject(val)){

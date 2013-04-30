@@ -49,12 +49,30 @@ function(d3,       _,                constants){
       .duration(constants.transitionDuration);
   }
 
+  function swapPosition(e1, e2){
+    var x1 = e1.attr('cx');
+    var x2 = e2.attr('cx');
+    var y1 = e1.attr('cy');
+    var y2 = e2.attr('cy');
+
+    e1.transition()
+      .attr('cx', x2)
+      .attr('cy', y2)
+      .duration(constants.transitionDuration);
+    e2.transition()
+      .attr('cx', x1)
+      .attr('cy', y1)
+      .duration(constants.transitionDuration);
+  }
+
   function execute(actions){
     _.each(actions, function(action){
       if(action.type === 'setColor'){
         setColor(d3.select('#d'+action.params.datum), action.params.color);
       } else if(action.type === 'swapColorAndPosition'){
         swapColorAndPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
+      } else if(action.type === 'swapPosition'){
+        swapPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
       } else if(action.type === 'end'){
         // clear action timers
         action.params.clearTimers();
