@@ -2,7 +2,6 @@ define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
   var step;
-
   var currentPrimary;
   var currentSecondary;
 
@@ -53,6 +52,7 @@ function(svgController,   constants){
   }
 
   return function sort(list, ascending){
+    // reset variables
     actions = [];
     step = 0;
     currentPrimary = undefined;
@@ -60,11 +60,13 @@ function(svgController,   constants){
 
     list = list.slice(); // make a copy
     ascending = (ascending === undefined) ? true : ascending;
+
     var outer;
     var inner;
     var outerMax;
     var innerMax;
     var swapIndex;
+
     for(outer=0, outerMax=list.length-2; outer<=outerMax; outer++){
       selectPrimary(list[outer]);
       for(inner=outer+1, innerMax=list.length-1, swapIndex = outer; inner<=innerMax; inner++){
@@ -72,16 +74,20 @@ function(svgController,   constants){
         step++;
         var outOfOrder = (ascending && list[swapIndex]>list[inner]) || (!ascending && list[swapIndex]<list[inner]);
         if(outOfOrder){
+          // transfer primary select to new max or min
           selectPrimary(list[inner]);
           currentSecondary = undefined;
           swapIndex = inner;
+          // edge case to add a step showing primary select on last index
           if(inner===innerMax){
             step++;
           }
         }
       }
+      // remove secondary select
       deselect(currentSecondary);
       currentSecondary = undefined;
+      // perform swap if needed
       if(swapIndex !== outer){
         swap(list[outer], list[swapIndex]);
         var tmp = list[outer];
@@ -89,6 +95,7 @@ function(svgController,   constants){
         list[swapIndex] = tmp;
         step++;
       }
+      // mark current index as sorted
       selectSorted(list[outer]);
       step++;
     }
