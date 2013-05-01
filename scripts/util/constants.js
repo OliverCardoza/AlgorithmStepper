@@ -1,5 +1,5 @@
 define({
-  stepInterval: 1000, // default
+  baseStepInterval: 1000,
   colors: {
     default: 'black',
     primary: 'red',
