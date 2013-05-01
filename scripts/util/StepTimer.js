@@ -8,6 +8,7 @@ function(constants,        svgController){
     var remaining = step*constants.stepInterval;
     var actions = actions;
     var state;
+    var previousStepInterval = constants.stepInterval;
 
     this.execute = function(){
       svgController.execute(actions);
@@ -25,6 +26,10 @@ function(constants,        svgController){
     this.resume = function() {
       if(!state || state === 'pause'){
         start = new Date();
+        // recalculate remaining based on current value of stepInterval
+        remaining = (remaining % previousStepInterval) + Math.floor(remaining/previousStepInterval)*constants.stepInterval;
+        previousStepInterval = constants.stepInterval;
+
         timerId = window.setTimeout(this.execute, remaining);
         state = 'run';
       }

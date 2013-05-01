@@ -46,6 +46,13 @@ function(_,                StepTimer,        svgController){
       stepTimers = [];
     };
 
+    // Event handler for when the speed dial is changed
+    this.changeSpeed = function(){
+      // resume will recalculate timeout values based on the new value of constants.stepInterval
+      this.pause();
+      this.play();
+    }
+
     actions.push(svgController.createAction(actions[actions.length-1].step, 'end', {clearTimers: self.clearTimers}));
   };
 });

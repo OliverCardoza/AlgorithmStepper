@@ -1,6 +1,5 @@
 define({
-  stepInterval: 1000,
-  transitionDuration: 900,
+  stepInterval: 1000, // default
   colors: {
     default: 'black',
     primary: 'red',

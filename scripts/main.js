@@ -1,5 +1,5 @@
-requirejs(['StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort'],
-function(   StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort) {
+requirejs(['util/constants', 'StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort'],
+function(   constants,        StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort) {
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
@@ -49,4 +49,16 @@ function(   StepController,   bubbleSort,             selectionSort,            
     .addEventListener('click', function(){ setNewAlgorithm('insertionSort'); }, false);
   document.getElementById('combSort')
     .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
+
+  var speedInput = document.getElementById('stepInterval');
+  // TODO: find a way to trigger event so that next 2 lines can be removed
+  constants.stepInterval = speedInput.value;
+  constants.transitionDuration = constants.stepInterval*0.9;
+  speedInput.addEventListener('change', function(e){
+    constants.stepInterval = e.srcElement.value;
+    constants.transitionDuration = constants.stepInterval*0.9;
+    if(controller){
+      controller.changeSpeed();
+    }
+  }, false);
 });
