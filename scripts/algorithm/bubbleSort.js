@@ -77,6 +77,7 @@ function(svgController,   constants){
       }
       deselect(currentSecondary);
       selectSorted(list[outer]);
+      step++
     }
     selectSorted(list[innerMax]);
     return actions;
