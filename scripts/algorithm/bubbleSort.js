@@ -35,6 +35,15 @@ function(svgController,   constants){
     }
   }
 
+  function selectSorted(datum){
+    addAction('setColor', {
+      datum: datum,
+      color: constants.colors.sorted
+    });
+    currentPrimary = undefined;
+    currentSecondary = undefined;
+  }
+
   function swap(primary, secondary){
     addAction('swapColorAndPosition', [primary, secondary]);
     currentPrimary = secondary;
@@ -67,9 +76,10 @@ function(svgController,   constants){
           step++;
         }
       }
+      deselect(currentSecondary);
+      selectSorted(list[outer]);
     }
-    deselect(list[outerMax]);
-    deselect(list[innerMax]);
+    selectSorted(list[innerMax]);
     return actions;
   }
 });
