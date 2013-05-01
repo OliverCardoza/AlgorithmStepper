@@ -58,7 +58,6 @@ function(svgController,   constants){
     currentPrimary = undefined;
     currentSecondary = undefined;
 
-    list = list.slice(); // make a copy
     ascending = (ascending === undefined) ? true : ascending;
 
     var outer;

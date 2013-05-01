@@ -15,19 +15,20 @@ function(   constants,        StepController,   bubbleSort,             selectio
       stopButton.removeEventListener('click', controller.stop);
     }
     var actions;
+    var dataCopy = data.slice();
     // TODO: add ability for user to input sort parameters (asc/desc to start)
     switch(name){
       case 'bubbleSort':
-        actions = bubbleSort(data, true);
+        actions = bubbleSort(dataCopy, true);
         break;
       case 'selectionSort':
-        actions = selectionSort(data, true);
+        actions = selectionSort(dataCopy, true);
         break;
       case 'insertionSort':
-        actions = insertionSort(data, true);
+        actions = insertionSort(dataCopy, true);
         break;
       case 'combSort':
-        actions = combSort(data, true);
+        actions = combSort(dataCopy, true);
         break;
       default:
         throw new Error('Bad algorithm name.');

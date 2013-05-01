@@ -44,13 +44,21 @@ function(svgController,   constants){
     addAction('swapPosition', [primary, secondary]);
   }
 
+  function selectAllSorted(list){
+    while(list.length){
+      addAction('setColor', {
+        datum: list.splice(0, 1),
+        color: constants.colors.sorted
+      })
+    }
+  }
+
   return function sort(list, ascending){
     actions = [];
     step = 0;
     currentPrimary = undefined;
     currentSecondary = undefined;
 
-    list = list.slice(); // make a copy
     ascending = (ascending === undefined) ? true : ascending;
 
     var gap = list.length-1;
@@ -76,8 +84,7 @@ function(svgController,   constants){
         }
       }
     }
-    deselect(list[inner-1]);
-    deselect(list[inner+gap-1]);
+    selectAllSorted(list);
     return actions;
   }
 });

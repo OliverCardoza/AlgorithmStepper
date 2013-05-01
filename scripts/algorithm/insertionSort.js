@@ -43,7 +43,6 @@ function(svgController,   constants){
     actions = [];
     step = 0;
 
-    list = list.slice(); // make a copy
     ascending = (ascending === undefined) ? true : ascending;
 
     var outer;
