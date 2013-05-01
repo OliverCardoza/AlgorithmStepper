@@ -51,9 +51,7 @@ function(   constants,        StepController,   bubbleSort,             selectio
     .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
 
   var speedInput = document.getElementById('speed');
-  // TODO: find a way to trigger event so that next 2 lines can be removed
-  constants.stepInterval = constants.baseStepInterval / speedInput.value;
-  constants.transitionDuration = constants.stepInterval*0.9;
+  // This is fugly but is it worth adding another library?
   speedInput.addEventListener('change', function(e){
     constants.stepInterval = constants.baseStepInterval / e.srcElement.value;
     constants.transitionDuration = constants.stepInterval*0.9;
@@ -61,4 +59,12 @@ function(   constants,        StepController,   bubbleSort,             selectio
       controller.changeSpeed();
     }
   }, false);
+  if ("fireEvent" in speedInput)
+      speedInput.fireEvent("onchange");
+  else
+  {
+      var evt = document.createEvent("HTMLEvents");
+      evt.initEvent("change", false, true);
+      speedInput.dispatchEvent(evt);
+  }
 });
