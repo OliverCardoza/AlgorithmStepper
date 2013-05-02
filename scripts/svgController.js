@@ -100,7 +100,7 @@ function(d3,       _,                constants){
         swapPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
       } else if(action.type === 'end'){
         // clear action timers
-        action.params.clearTimers();
+        action.params.done();
       } else if(action.type === 'setColorAndShift'){
         setColorAndShift(d3.select('#d'+action.params.datum), action.params.color, action.params.xUnits, action.params.yUnits);
       } else if(action.type === 'shift'){
