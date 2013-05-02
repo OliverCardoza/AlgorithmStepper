@@ -1,5 +1,3 @@
-// Collaborator: Tim Down
-// Original Source: http://stackoverflow.com/questions/3969475/javascript-pause-settimeout
 define(['util/constants', 'svgController'],
 function(constants,        svgController){
   return function StepTimer(actions, step){
