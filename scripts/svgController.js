@@ -1,7 +1,7 @@
 define(['lib/d3', 'lib/underscore', 'util/constants'],
 function(d3,       _,                constants){
   var svg = d3.select('svg');
-  var scalingFactor;
+  // var scalingFactor;
   var xUnit;
   var yUnit;
 
@@ -11,33 +11,25 @@ function(d3,       _,                constants){
 
   function init(data){
     var max = _.max(data);
-    var verticalPadding = 30;
-    var verticalMaxHeight = (svg.attr('height')-verticalPadding)/3; // Allow for each element to have at minimum 100% padding above and below
-    var horizontalMiddle = svg.attr('height')/2;
-    var horizontalSpacing = 10;
-    var cornerHeight = 10;
-    var verticalScalingFactor = verticalMaxHeight/(max-1);
-    scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
 
+    // TODO: add sanity checks for these numbers (eg. elementAndSpaceWidth > 10)
+    var verticalPadding = 30;
+    var maxElementHeight = (svg.attr('height')-verticalPadding)/3; // Allow for each element to have at minimum 100% padding above and below
+    var verticalMiddle = svg.attr('height')/2;
+    var verticalScalingFactor = (maxElementHeight/2)/(max-1);
+
+    var horizontalPadding = 30;
+    var elementAndSpaceWidth = ((svg.attr('width')-horizontalPadding)/data.length); // Allow for each element and a half-element space betweeen to fit
+    var elementWidth = elementAndSpaceWidth-10;
+    var horizontalSpacing = 10;
+
+    // TODO: calculate
+    var cornerHeight = verticalScalingFactor*(elementWidth/elementAndSpaceWidth);
+    
     // TODO: define better coordinate system for shifts
+    scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
     yUnit = 100;
     xUnit = scalingFactor;
-
-    // TODO: be able to change sort visualization
-    // svg.selectAll("circle")
-    //     .data(data)
-    //   .enter().append("circle")
-    //     .attr("cy", svg.attr('height')/2)
-    //     .attr("cx", function(val, i){
-    //       return scalingFactor*i+50;
-    //     })
-    //     .attr("r", function(val){
-    //       // return val*3/data.length; // TODO: Magic number
-    //       return (val/max)*0.5*(scalingFactor*0.95);
-    //     })
-    //     .attr("id", function(val){
-    //       return 'd'+val;
-    //     });
 
     // Assumes numbers are in range [1, max]
     svg.selectAll("polygon")
@@ -48,23 +40,17 @@ function(d3,       _,                constants){
           // p2
           // p1
           //    p4
-          var p1y = horizontalMiddle + (val-1)*verticalScalingFactor/2;
-          var p2y = horizontalMiddle - (val-1)*verticalScalingFactor/2;
-          var p3y = p2y - (cornerHeight/2 );
-          var p4y = p1y + (cornerHeight/2 );
-          // var p1y = horizontalMiddle + (val-1)*cornerHeight*2;
-          // var p2y = horizontalMiddle - (val-1)*cornerHeight*2;
-          // var p3y = p2y - (cornerHeight );
-          // var p4y = p1y + (cornerHeight );
 
-          // var p1x = 100 + i*horizontalSpacing;
-          // var p2x = p1x;
-          // var p3x = p1x + horizontalSpacing;
-          // var p4x = p3x;
+          // TODO: change to object constructor with map using val as key
+          // http://stackoverflow.com/questions/13204562/proper-format-for-drawing-polygon-data-in-d3
+          var p1y = verticalMiddle + (val-1)*verticalScalingFactor;
+          var p2y = verticalMiddle - (val-1)*verticalScalingFactor;
+          var p3y = p2y - cornerHeight;
+          var p4y = p1y + cornerHeight;
 
-          var p1x = 100 + i*2*horizontalSpacing;
+          var p1x = horizontalPadding/2 + horizontalSpacing/2 + i*elementAndSpaceWidth;
           var p2x = p1x;
-          var p3x = p1x + horizontalSpacing;
+          var p3x = p1x + elementWidth;
           var p4x = p3x;
           return p1x + "," + p1y + " "
                + p2x + "," + p2y + " "
