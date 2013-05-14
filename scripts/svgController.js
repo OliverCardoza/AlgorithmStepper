@@ -10,7 +10,7 @@ function(d3,       _,                constants){
   }
 
   function init(data){
-    scalingFactor = (svg.attr('width')-100)/data.length;
+    scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
 
     // TODO: define better coordinate system for shifts
     yUnit = 100;
@@ -24,7 +24,7 @@ function(d3,       _,                constants){
           return scalingFactor*i+50;
         })
         .attr("r", function(val){
-          return val*0.5;
+          return val*3/data.length; // TODO: Magic number
         })
         .attr("id", function(val){
           return 'd'+val;

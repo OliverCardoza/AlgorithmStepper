@@ -1,12 +1,16 @@
 requirejs(['util/constants', 'StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort'],
 function(   constants,        StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort) {
+  // Control Buttons
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
 
   var controller;
   var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
+  // var data = [4, 12, 2, 10, 18, 6];
+  // var data = [12, 45, 11, 77, 2, 99, 39, 36, 85];
 
+  // Algorithm Switcher
   function setNewAlgorithm(name){
     if(controller){
       controller.stop();
@@ -35,6 +39,7 @@ function(   constants,        StepController,   bubbleSort,             selectio
         break;
     }
 
+    // Potentially also give StepController svgController params (setup width/height and x/y units)
     controller = new StepController(data, actions);
     playButton.addEventListener('click', controller.play, false);
     pauseButton.addEventListener('click', controller.pause, false);
@@ -42,6 +47,7 @@ function(   constants,        StepController,   bubbleSort,             selectio
     controller.play();
   }
 
+  // Algorithm buttons
   document.getElementById('bubbleSort')
     .addEventListener('click', function(){ setNewAlgorithm('bubbleSort'); }, false);
   document.getElementById('selectionSort')
@@ -51,6 +57,7 @@ function(   constants,        StepController,   bubbleSort,             selectio
   document.getElementById('combSort')
     .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
 
+  // Speed Changer
   var speedInput = document.getElementById('speed');
   // This is fugly but is it worth adding another library?
   speedInput.addEventListener('change', function(e){
