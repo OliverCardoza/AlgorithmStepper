@@ -1,7 +1,6 @@
 define(['lib/d3', 'lib/underscore', 'util/constants'],
 function(d3,       _,                constants){
   var svg = d3.select('svg');
-  // var scalingFactor;
   var xUnit;
   var yUnit;
 
@@ -26,7 +25,6 @@ function(d3,       _,                constants){
     var horizontalSpacing = 10;
     
     // TODO: define better coordinate system for shifts
-    scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
     yUnit = svg.attr('height')/3;
     xUnit = elementAndSpaceWidth;
 
