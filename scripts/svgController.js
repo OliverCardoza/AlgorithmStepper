@@ -4,11 +4,6 @@ function(d3,       _,                constants){
   var xUnit;
   var yUnit;
 
-  // TODO: replace with exit()
-  function clear(){
-    svg.selectAll('rect').remove();
-  }
-
   function init(data){
     var max = _.max(data);
 
@@ -49,6 +44,7 @@ function(d3,       _,                constants){
         .attr("id", function(val){
           return 'd'+val;
         });
+      .exit().remove();
   }
 
   function setColor(element, color){
@@ -128,7 +124,6 @@ function(d3,       _,                constants){
   }
 
   return {
-    clear: clear,
     init: init,
     execute: execute,
     createAction: createAction

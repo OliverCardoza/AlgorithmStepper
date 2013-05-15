@@ -12,7 +12,6 @@ function(_,                StepTimer,        svgController){
         });
         state = 'run';
       } else if(!state || state === 'stop' || state === 'done'){
-        svgController.clear();
         svgController.init(data);
 
         // refactor after looking up underscore methods
