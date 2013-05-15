@@ -18,7 +18,7 @@ function(d3,       _,                constants){
     var verticalPadding = 30;
     var maxElementHeight = (svg.attr('height')-verticalPadding)/3; // Allow for each element to have at minimum 100% padding above and below
     var verticalMiddle = svg.attr('height')/2;
-    var verticalScalingFactor = (maxElementHeight/2)/max;
+    var verticalScalingFactor = maxElementHeight/max;
 
     var horizontalPadding = 30;
     var elementAndSpaceWidth = ((svg.attr('width')-horizontalPadding)/data.length); // Allow for each element and a half-element space betweeen to fit
@@ -27,7 +27,7 @@ function(d3,       _,                constants){
     
     // TODO: define better coordinate system for shifts
     scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
-    yUnit = maxElementHeight;
+    yUnit = svg.attr('height')/3;
     xUnit = elementAndSpaceWidth;
 
     // Assumes numbers are in range [1, max]
@@ -42,10 +42,10 @@ function(d3,       _,                constants){
           return elementWidth;
         })
         .attr('y', function(val){
-          return verticalMiddle - val*verticalScalingFactor;
+          return svg.attr('height')*(2/3) - val*verticalScalingFactor;
         })
         .attr('height', function(val){
-          return 2*val*verticalScalingFactor
+          return val*verticalScalingFactor;
         })
         .attr("id", function(val){
           return 'd'+val;
