@@ -17,7 +17,7 @@ function(d3,       _,                constants){
     var verticalPadding = 30;
     var maxElementHeight = (svg.attr('height')-verticalPadding)/3; // Allow for each element to have at minimum 100% padding above and below
     var verticalMiddle = svg.attr('height')/2;
-    var verticalScalingFactor = (maxElementHeight/2)/(max-1);
+    var verticalScalingFactor = (maxElementHeight/2)/max;
 
     var horizontalPadding = 30;
     var elementAndSpaceWidth = ((svg.attr('width')-horizontalPadding)/data.length); // Allow for each element and a half-element space betweeen to fit
@@ -41,10 +41,10 @@ function(d3,       _,                constants){
           return elementWidth;
         })
         .attr('y', function(val){
-          return verticalMiddle - (val-1)*verticalScalingFactor;
+          return verticalMiddle - val*verticalScalingFactor;
         })
         .attr('height', function(val){
-          return 2*(val-1)*verticalScalingFactor
+          return 2*val*verticalScalingFactor
         })
         .attr("id", function(val){
           return 'd'+val;
