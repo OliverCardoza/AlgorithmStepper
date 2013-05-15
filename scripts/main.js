@@ -6,9 +6,10 @@ function(   constants,        StepController,   bubbleSort,             selectio
   var stopButton = document.getElementById('stop');
 
   var controller;
-  var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
+  // var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
   // var data = [4, 12, 2, 10, 18, 6];
   // var data = [12, 45, 11, 77, 2, 99, 39, 36, 85];
+  var data = [21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
   // Algorithm Switcher
   function setNewAlgorithm(name){
