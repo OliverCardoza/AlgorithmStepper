@@ -41,7 +41,7 @@ function(svgController,   constants){
   }
 
   function swap(primary, secondary){
-    addAction('swapPosition', [primary, secondary]);
+    addAction('swapHorizontalPosition', [primary, secondary]);
   }
 
   function selectAllSorted(list){
