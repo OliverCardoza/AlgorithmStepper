@@ -12,6 +12,7 @@ function(d3,       _,                constants){
   function init(data){
     var max = _.max(data);
 
+    // TODO: minimum height for large data sets so that smallest element is visible
     // TODO: add sanity checks for these numbers (eg. elementAndSpaceWidth > 10)
     // TODO: replace scaling factors with d3.scale and d3.domain (when complete remove assumption about number domain)
     var verticalPadding = 30;
