@@ -45,7 +45,7 @@ function(svgController,   constants){
   }
 
   function swap(primary, secondary){
-    addAction('swapColorAndPosition', [primary, secondary]);
+    addAction('swapColorAndHorizontalPosition', [primary, secondary]);
     currentPrimary = secondary;
     currentSecondary = primary;
   }

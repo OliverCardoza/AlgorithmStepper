@@ -1,9 +1,10 @@
-define(['lib/d3', 'lib/underscore', 'util/constants'],
-function(d3,       _,                constants){
+define(['lib/d3', 'lib/underscore', 'util/constants', 'util/Polygon'],
+function(d3,       _,                constants,        Polygon){
   var svg = d3.select('svg');
   // var scalingFactor;
   var xUnit;
   var yUnit;
+  var dataMap = {};
 
   function clear(){
     svg.selectAll('circle').remove();
@@ -40,9 +41,6 @@ function(d3,       _,                constants){
           // p2
           // p1
           //    p4
-
-          // TODO: change to object constructor with map using val as key
-          // http://stackoverflow.com/questions/13204562/proper-format-for-drawing-polygon-data-in-d3
           var p1y = verticalMiddle + (val-1)*verticalScalingFactor;
           var p2y = verticalMiddle - (val-1)*verticalScalingFactor;
           var p3y = p2y - cornerHeight;
@@ -52,11 +50,12 @@ function(d3,       _,                constants){
           var p2x = p1x;
           var p3x = p1x + elementWidth;
           var p4x = p3x;
-          return p1x + "," + p1y + " "
-               + p2x + "," + p2y + " "
-               + p3x + "," + p3y + " "
-               + p3x + "," + p4y;
-
+          var polygon = new Polygon([{x: p1x, y: p1y},
+                                     {x: p2x, y: p2y},
+                                     {x: p3x, y: p3y},
+                                     {x: p4x, y: p4y}]);
+          dataMap[val] = polygon;
+          return polygon.toString();
         })
         .attr("id", function(val){
           return 'd'+val;
@@ -68,6 +67,7 @@ function(d3,       _,                constants){
   }
 
   // TODO: fix all shifts
+  // Problem: cannot perform transition on polygin easily
   function setColorAndShift(element, color, xUnits, yUnits){
     var x = Number(element.attr('cx'));
     var y = Number(element.attr('cy'));
@@ -87,7 +87,7 @@ function(d3,       _,                constants){
       .duration(constants.transitionDuration);
   }
 
-  function swapColorAndPosition(e1, e2){
+  function swapColorAndHorizontalPosition(e1, e2){
     var x1 = e1.attr('cx');
     var x2 = e2.attr('cx');
     var y1 = e1.attr('cy');
@@ -127,8 +127,8 @@ function(d3,       _,                constants){
     _.each(actions, function(action){
       if(action.type === 'setColor'){
         setColor(d3.select('#d'+action.params.datum), action.params.color);
-      } else if(action.type === 'swapColorAndPosition'){
-        swapColorAndPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
+      } else if(action.type === 'swapColorAndHorizontalPosition'){
+        swapColorAndHorizontalPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
       } else if(action.type === 'swapPosition'){
         swapPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
       } else if(action.type === 'end'){
@@ -138,6 +138,8 @@ function(d3,       _,                constants){
         setColorAndShift(d3.select('#d'+action.params.datum), action.params.color, action.params.xUnits, action.params.yUnits);
       } else if(action.type === 'shift'){
         shift(d3.select('#d'+action.params.datum), action.params.xUnits, action.params.yUnits);
+      } else {
+        throw new Error('Unknown svg action');
       }
     });
   }
