@@ -1,11 +1,11 @@
-define(['lib/d3', 'lib/underscore', 'util/constants', 'util/Polygon'],
-function(d3,       _,                constants,        Polygon){
+define(['lib/d3', 'lib/underscore', 'util/constants'],
+function(d3,       _,                constants){
   var svg = d3.select('svg');
   // var scalingFactor;
   var xUnit;
   var yUnit;
-  var dataMap = {};
 
+  // TODO: replace with exit()
   function clear(){
     svg.selectAll('circle').remove();
   }
@@ -23,9 +23,6 @@ function(d3,       _,                constants,        Polygon){
     var elementAndSpaceWidth = ((svg.attr('width')-horizontalPadding)/data.length); // Allow for each element and a half-element space betweeen to fit
     var elementWidth = elementAndSpaceWidth-10;
     var horizontalSpacing = 10;
-
-    // TODO: calculate
-    var cornerHeight = verticalScalingFactor*(elementWidth/elementAndSpaceWidth);
     
     // TODO: define better coordinate system for shifts
     scalingFactor = (svg.attr('width')-100)/data.length; // TODO: magic number
@@ -33,29 +30,21 @@ function(d3,       _,                constants,        Polygon){
     xUnit = scalingFactor;
 
     // Assumes numbers are in range [1, max]
-    svg.selectAll("polygon")
+    // Consider maybe changing to have flat bottom like bar-graph
+    svg.selectAll("rect")
         .data(data)
-      .enter().append("polygon")
-        .attr("points", function(val, i){
-          //    p3
-          // p2
-          // p1
-          //    p4
-          var p1y = verticalMiddle + (val-1)*verticalScalingFactor;
-          var p2y = verticalMiddle - (val-1)*verticalScalingFactor;
-          var p3y = p2y - cornerHeight;
-          var p4y = p1y + cornerHeight;
-
-          var p1x = horizontalPadding/2 + horizontalSpacing/2 + i*elementAndSpaceWidth;
-          var p2x = p1x;
-          var p3x = p1x + elementWidth;
-          var p4x = p3x;
-          var polygon = new Polygon([{x: p1x, y: p1y},
-                                     {x: p2x, y: p2y},
-                                     {x: p3x, y: p3y},
-                                     {x: p4x, y: p4y}]);
-          dataMap[val] = polygon;
-          return polygon.toString();
+      .enter().append("rect")
+        .attr('x', function(val, i){
+          return horizontalPadding/2 + horizontalSpacing/2 + i*elementAndSpaceWidth;
+        })
+        .attr('width', function(val){
+          return elementWidth;
+        })
+        .attr('y', function(val){
+          return verticalMiddle - (val-1)*verticalScalingFactor;
+        })
+        .attr('height', function(val){
+          return 2*(val-1)*verticalScalingFactor
         })
         .attr("id", function(val){
           return 'd'+val;
