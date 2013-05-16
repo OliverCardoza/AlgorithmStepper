@@ -1,15 +1,16 @@
-requirejs(['util/constants', 'StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort'],
-function(   constants,        StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort) {
+// TODO: move algorithms to their own index file so only 1 import needed here
+requirejs(['util/constants', 'StepController', 'algorithm/bubbleSort', 'algorithm/selectionSort', 'algorithm/insertionSort', 'algorithm/combSort', 'algorithm/quickSort'],
+function(   constants,        StepController,   bubbleSort,             selectionSort,             insertionSort,             combSort,             quickSort) {
   // Control Buttons
   var playButton = document.getElementById('play');
   var pauseButton = document.getElementById('pause');
   var stopButton = document.getElementById('stop');
 
   var controller;
-  // var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
+  var data = [20, 60, 10, 50, 90, 30]; // TODO: replace with generator
   // var data = [4, 12, 2, 10, 18, 6];
   // var data = [12, 45, 11, 77, 2, 99, 39, 36, 85];
-  var data = [21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  // var data = [21, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
   // Algorithm Switcher
   function setNewAlgorithm(name){
@@ -35,6 +36,9 @@ function(   constants,        StepController,   bubbleSort,             selectio
       case 'combSort':
         actions = combSort(dataCopy, true);
         break;
+      case 'quickSort':
+        actions = quickSort(dataCopy, true);
+        break;
       default:
         throw new Error('Bad algorithm name.');
         break;
@@ -57,6 +61,8 @@ function(   constants,        StepController,   bubbleSort,             selectio
     .addEventListener('click', function(){ setNewAlgorithm('insertionSort'); }, false);
   document.getElementById('combSort')
     .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
+  document.getElementById('quickSort')
+    .addEventListener('click', function(){ setNewAlgorithm('quickSort'); }, false);
 
   // Speed Changer
   var speedInput = document.getElementById('speed');
