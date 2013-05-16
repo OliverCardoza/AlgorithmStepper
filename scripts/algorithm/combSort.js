@@ -1,4 +1,3 @@
-
 define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
