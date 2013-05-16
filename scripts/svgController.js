@@ -24,11 +24,8 @@ function(d3,       _,                constants){
     yUnit = svg.attr('height')/3;
     xUnit = elementAndSpaceWidth;
 
-    // Assumes numbers are in range [1, max]
-    // Consider maybe changing to have flat bottom like bar-graph
-    svg.selectAll("rect")
-        .data(data)
-      .enter().append("rect")
+    function basicAttr(selection){
+      selection
         .attr('x', function(val, i){
           return horizontalPadding/2 + horizontalSpacing/2 + i*elementAndSpaceWidth;
         })
@@ -43,8 +40,18 @@ function(d3,       _,                constants){
         })
         .attr("id", function(val){
           return 'd'+val;
-        });
-      .exit().remove();
+        })
+        .style('fill', constants.colors.default);
+    }
+
+    // Assumes numbers are in range [1, max]
+    // Consider maybe changing to have flat bottom like bar-graph
+    var rect = svg.selectAll("rect")
+        .data(data);
+
+    basicAttr(rect);
+    basicAttr(rect.enter().append("rect"));
+    rect.exit().remove();
   }
 
   function setColor(element, color){
