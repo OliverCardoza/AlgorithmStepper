@@ -18,20 +18,20 @@ function(svgController,   constants){
   }
 
   function select(type, datum){
-    if(type && current[type]){
+    if(current[type]){
       deselect(current[type]);
     }
     addAction('setColor', {
       datum: datum,
       color: colors[type]
     });
-    if(type && type!=='default'){
+    if(type!=='default'){
       current[type] = datum;
     }
   }
 
   function deselect(datum){
-    select(null, datum);
+    select('default', datum);
   }
   function selectPivot(datum){
     select('pivot', datum);
@@ -75,7 +75,7 @@ function(svgController,   constants){
     primaryIndex = leftIndex;
     selectPrimary(list[leftIndex]);
     step++
-    for(secondaryIndex = leftIndex, max = rightIndex-1; secondaryIndex<max; secondaryIndex++){
+    for(secondaryIndex = leftIndex, max = rightIndex; secondaryIndex<max; secondaryIndex++){
       if(secondaryIndex !== primaryIndex){
         selectSecondary(list[secondaryIndex]);
         step++
@@ -83,14 +83,19 @@ function(svgController,   constants){
       var outOfOrder = (ascending && list[secondaryIndex]<list[pivotIndex]) || (!ascending && list[secondaryIndex]>list[pivotIndex]);
       if(outOfOrder){
         if(secondaryIndex !== primaryIndex){
-          swapColorAndPosition(secondaryIndex, primaryIndex);
+          swapPosition(secondaryIndex, primaryIndex);
           step++;
+          deselect(list[secondaryIndex]);
         }
         primaryIndex++;
+        current['primary'] = list[secondaryIndex];
         selectPrimary(list[primaryIndex]);
         step++;
       }
     }
+    swapPosition(primaryIndex, pivotIndex);
+    step++;
+    deselect(list[primaryIndex]);
     // TODO: stuff here
     
 
