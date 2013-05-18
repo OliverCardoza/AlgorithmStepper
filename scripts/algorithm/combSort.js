@@ -1,47 +1,42 @@
 define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
-  var step;
-
-  var currentPrimary;
-  var currentSecondary;
+  var step;  
 
   //1.247330950103979
   //1.3
   var shrinkFactor = 1.24;
 
+  // TODO below was copypasta'd from bubblesort. need to make this common code
+  // BEGIN COPY PASTA
   function addAction(command, params){
     actions.push(svgController.createAction(step, command, params));
   }
-
-  function deselect(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.colors.default
+  function deselect(type){
+    addAction('deselect', {
+      type: type
     });
   }
-
-  function select(datum, isPrimary){
-    var deselectPrev = (isPrimary&&(currentPrimary!==undefined)) || (!isPrimary&&(currentSecondary!==undefined)&&currentSecondary!==currentPrimary);
-    if(deselectPrev){
-      deselect(isPrimary?currentPrimary:currentSecondary);
-    }
-
+  function select(datum, type){
+    addAction('select', {
+      datum: datum,
+      type: type
+    });
+    return true;
+  }
+  function selectSorted(datum){
     addAction('setColor', {
       datum: datum,
-      color: isPrimary?constants.colors.primary:constants.colors.secondary
+      color: constants.colors.sorted
     });
-
-    if(isPrimary){
-      currentPrimary = datum;
-    } else {
-      currentSecondary = datum;
-    }
   }
-
-  function swap(primary, secondary){
-    addAction('swapHorizontalPosition', [primary, secondary]);
+  function swap(list, outer, inner){
+    addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
+    var tmp = list[outer];
+    list[outer] = list[inner];
+    list[inner] = tmp;
   }
+  // END COPY PASTA
 
   function selectAllSorted(list){
     while(list.length){
@@ -55,34 +50,28 @@ function(svgController,   constants){
   return function sort(list, ascending){
     actions = [];
     step = 0;
-    currentPrimary = undefined;
-    currentSecondary = undefined;
-
-    ascending = (ascending === undefined) ? true : ascending;
 
     var gap = list.length-1;
     var swapped = false;
-    var inner;
-    var innerMax;
 
     while(gap > 1 || swapped === true){
       gap = Math.floor(gap/shrinkFactor) || 1;
       swapped = false;
-      for(inner = 0, innerMax = list.length-gap-1; inner<=innerMax; inner++){
-        select(list[inner], true);
-        select(list[inner+gap], false);
+      for(var inner = 0; inner<list.length-gap; inner++){
+        select(list[inner], 'primary');
+        select(list[inner+gap], 'secondary');
         step++
+
         var outOfOrder = (ascending && list[inner+gap]<list[inner]) || (!ascending && list[inner+gap]>list[inner]);
         if(outOfOrder){
-          swap(list[inner], list[inner+gap]);
+          swap(list, inner, inner+gap);
           step++;
-          var tmp = list[inner+gap];
-          list[inner+gap] = list[inner];
-          list[inner] = tmp;
           swapped = true;
         }
       }
     }
+    deselect('primary');
+    deselect('secondary');
     selectAllSorted(list);
     return actions;
   }
