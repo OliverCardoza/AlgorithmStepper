@@ -2,103 +2,75 @@ define(['svgController', 'util/constants'],
 function(svgController,   constants){
   var actions;
   var step;
-  var currentPrimary;
-  var currentSecondary;
 
+  // TODO below was copypasta'd from bubblesort. need to make this common code
+  // BEGIN COPY PASTA
   function addAction(command, params){
     actions.push(svgController.createAction(step, command, params));
   }
-
-  function deselect(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.colors.default
+  function deselect(type){
+    addAction('deselect', {
+      type: type
     });
   }
-
-  function select(datum, color){
-    addAction('setColor', {
+  function select(datum, type){
+    addAction('select', {
       datum: datum,
-      color: color
+      type: type
     });
+    return true;
   }
-
-  function selectPrimary(datum){
-    if(currentPrimary!==undefined){
-      deselect(currentPrimary);
-    }
-    select(datum, constants.colors.primary);
-    currentPrimary = datum;
-  }
-
-  function selectSecondary(datum){
-    if(currentSecondary!==undefined){
-      deselect(currentSecondary);
-    }
-    select(datum, constants.colors.secondary);
-    currentSecondary = datum;
-  }
-
   function selectSorted(datum){
-    select(datum, constants.colors.sorted);
-    currentPrimary = undefined;
-    currentSecondary = undefined;
+    addAction('setColor', {
+      datum: datum,
+      color: constants.colors.sorted
+    });
   }
-
-  function swap(primary, secondary){
-    addAction('swapHorizontalPosition', [primary, secondary]);
-    currentPrimary = secondary;
-    currentSecondary = primary;
+  function swap(list, outer, inner){
+    addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
+    var tmp = list[outer];
+    list[outer] = list[inner];
+    list[inner] = tmp;
   }
+  // END COPY PASTA
 
   return function sort(list, ascending){
     // reset variables
     actions = [];
     step = 0;
-    currentPrimary = undefined;
-    currentSecondary = undefined;
 
-    ascending = (ascending === undefined) ? true : ascending;
-
-    var outer;
-    var inner;
-    var outerMax;
-    var innerMax;
     var swapIndex;
 
-    for(outer=0, outerMax=list.length-2; outer<=outerMax; outer++){
-      selectPrimary(list[outer]);
-      for(inner=outer+1, innerMax=list.length-1, swapIndex = outer; inner<=innerMax; inner++){
-        selectSecondary(list[inner]);
+    for(var outer=0; (outer<list.length-1) && select(list[outer], 'primary'); outer++){
+      for(var inner=outer+1, swapIndex = outer; (inner<list.length) && select(list[inner], 'secondary'); inner++){
         step++;
+
         var outOfOrder = (ascending && list[swapIndex]>list[inner]) || (!ascending && list[swapIndex]<list[inner]);
         if(outOfOrder){
           // transfer primary select to new max or min
-          selectPrimary(list[inner]);
-          currentSecondary = undefined;
+          select(list[inner], 'primary');
+          deselect('secondary');
+          step++;
           swapIndex = inner;
           // edge case to add a step showing primary select on last index
-          if(inner===innerMax){
-            step++;
+          if(inner===list.length-1){
+            // step++;
           }
         }
       }
       // remove secondary select
-      deselect(currentSecondary);
-      currentSecondary = undefined;
+      // deselect(currentSecondary);
+      deselect('secondary');
       // perform swap if needed
       if(swapIndex !== outer){
-        swap(list[outer], list[swapIndex]);
-        var tmp = list[outer];
-        list[outer] = list[swapIndex];
-        list[swapIndex] = tmp;
+        swap(list, outer, swapIndex);
         step++;
       }
       // mark current index as sorted
       selectSorted(list[outer]);
       step++;
     }
-    selectSorted(list[innerMax]);
+    selectSorted(list[list.length-1]);
     return actions;
   };
 });

@@ -25,6 +25,7 @@ function(svgController,   constants){
       color: constants.colors.sorted
     });
   }
+  // TODO: change to without color
   function swap(list, outer, inner){
     addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
     var tmp = list[outer];
