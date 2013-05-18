@@ -52,30 +52,39 @@ function(d3,       _,                constants){
     rect.exit().remove();
   }
 
-  function setColor(element, color){
-    element.transition().duration(constants.transitionDuration).style('fill', color);
-  }
-
-  function setColorAndShift(element, color, xUnits, yUnits){
-    var x = Number(element.attr('x'));
-    var y = Number(element.attr('y'));
-    element.transition()
-      .attr('x', x+xUnits*xUnit)
-      .attr('y', y+yUnits*yUnit)
-      .style('fill', color)
+  function setColor(params){
+    svg.select('#d'+params.datum).transition()
+      .style('fill', params.color)
       .duration(constants.transitionDuration);
   }
 
-  function shift(element, xUnits, yUnits){
+  function setColorAndShift(params){
+    var element = svg.select('#d'+params.datum);
     var x = Number(element.attr('x'));
     var y = Number(element.attr('y'));
+
     element.transition()
-      .attr('x', x+xUnits*xUnit)
-      .attr('y', y+yUnits*yUnit)
+      .attr('x', x+xUnit*params.xUnits)
+      .attr('y', y+yUnit*params.yUnits)
+      .style('fill', params.color)
       .duration(constants.transitionDuration);
   }
 
-  function swapColorAndHorizontalPosition(e1, e2){
+  function shift(params){
+    var element = svg.select('#d'+params.datum);
+    var x = Number(element.attr('x'));
+    var y = Number(element.attr('y'));
+
+    element.transition()
+      .attr('x', x+xUnit*params.xUnits)
+      .attr('y', y+yUnit*params.yUnits)
+      .duration(constants.transitionDuration);
+  }
+
+  function swapColorAndHorizontalPosition(params){
+    var e1 = svg.select('#d'+params[0]);
+    var e2 = svg.select('#d'+params[1]);
+
     var x1 = e1.attr('x');
     var x2 = e2.attr('x');
     var c1 = e1.style('fill');
@@ -91,21 +100,22 @@ function(d3,       _,                constants){
       .duration(constants.transitionDuration);
   }
 
-  function swapHorizontalPosition(e1, e2){
-    var x1 = e1.attr('x');
-    var x2 = e2.attr('x');
+  function swapHorizontalPosition(params){
+    var e1 = svg.select('#d'+params[0]);
+    var e2 = svg.select('#d'+params[1]);
 
     e1.transition()
-      .attr('x', x2)
+      .attr('x', e2.attr('x'))
       .duration(constants.transitionDuration);
     e2.transition()
-      .attr('x', x1)
+      .attr('x', e1.attr('x'))
       .duration(constants.transitionDuration);
   }
 
-  function select(element, type){
-    var cursor = svg.selectAll('rect#' + type)
-      .data([type]);
+  function select(params){
+    var element = svg.select('#d'+params.datum);
+    var cursor = svg.selectAll('rect#' + params.type)
+      .data([params.type]);
 
     function setup(selection){
       selection
@@ -115,38 +125,39 @@ function(d3,       _,                constants){
           return Number(element.attr('y'))+Number(element.attr('height'))+10;
         })
         .attr('height', 15)
-        .attr('id', type)
-        .style('fill', constants.colors[type]);
+        .attr('id', params.type)
+        .style('fill', constants.colors[params.type]);
     }
 
+    // TODO: commented line shouldn't cause problems...why does it at high speeds?
+    // setup(cursor.transition().duration(constants.transitionDuration));
     setup(cursor.transition());
     setup(cursor.enter().append('rect'));
   }
 
-  function deselect(type){
-    svg.select('rect#'+type).remove();
+  function deselect(params){
+    svg.select('rect#'+params.type).remove();
   }
 
-  // TODO: Make actionMap['action']
+  function end(params){
+    // clear action timers
+    params.done();
+  }
+
+  var actionMap = {
+    deselect: deselect,
+    end: end,
+    select: select,
+    setColor: setColor,
+    setColorAndShift: setColorAndShift,
+    shift: shift,
+    swapColorAndHorizontalPosition: swapColorAndHorizontalPosition,
+    swapHorizontalPosition: swapHorizontalPosition
+  };
   function execute(actions){
     _.each(actions, function(action){
-      if(action.type === 'setColor'){
-        setColor(d3.select('#d'+action.params.datum), action.params.color);
-      } else if(action.type === 'swapColorAndHorizontalPosition'){
-        swapColorAndHorizontalPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
-      } else if(action.type === 'swapHorizontalPosition'){
-        swapHorizontalPosition(d3.select('#d'+action.params[0]), d3.select('#d'+action.params[1]));
-      } else if(action.type === 'end'){
-        // clear action timers
-        action.params.done();
-      } else if(action.type === 'setColorAndShift'){
-        setColorAndShift(d3.select('#d'+action.params.datum), action.params.color, action.params.xUnits, action.params.yUnits);
-      } else if(action.type === 'shift'){
-        shift(d3.select('#d'+action.params.datum), action.params.xUnits, action.params.yUnits);
-      } else if(action.type === 'select'){
-        select(d3.select('#d'+action.params.datum), action.params.type);
-      } else if(action.type === 'deselect'){
-        deselect(action.params.type);
+      if(_.has(actionMap, action.type)){
+        actionMap[action.type](action.params);
       } else {
         throw new Error('Unknown svg action');
       }
