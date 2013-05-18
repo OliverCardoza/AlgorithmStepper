@@ -3,101 +3,53 @@ function(svgController,   constants){
   var actions;
   var step;
 
-  var currentPrimary;
-  var currentSecondary;
-
   function addAction(command, params){
     actions.push(svgController.createAction(step, command, params));
   }
 
-  function deselect(datum, type){
-    // addAction('setColor', {
-    //   datum: datum,
-    //   color: constants.colors.default
-    // });
-    if(type){
-      addAction('deselect', {
-        type: type
-      });
-    }
+  function deselect(type){
+    addAction('deselect', {
+      type: type
+    });
   }
-
-  function select(datum, isPrimary){
-    var deselectPrev = (isPrimary&&(currentPrimary!==undefined)) || (!isPrimary&&(currentSecondary!==undefined));
-    if(deselectPrev){
-      deselect(isPrimary?currentPrimary:currentSecondary);
-    }
-
-    if(isPrimary){
-      addAction('select', {
-        datum: datum,
-        type: 'primary'
-      });
-    } else {
-      // addAction('setColor', {
-      //   datum: datum,
-      //   color: isPrimary?constants.colors.primary:constants.colors.secondary
-      // });
-      addAction('select', {
-        datum: datum,
-        type: 'secondary'
-      });
-    }
-
-    if(isPrimary){
-      currentPrimary = datum;
-    } else {
-      currentSecondary = datum;
-    }
+  function select(datum, type){
+    addAction('select', {
+      datum: datum,
+      type: type
+    });
+    return true;
   }
-
   function selectSorted(datum){
     addAction('setColor', {
       datum: datum,
       color: constants.colors.sorted
     });
-    currentPrimary = undefined;
-    currentSecondary = undefined;
   }
-
-  function swap(primary, secondary){
-    addAction('swapColorAndHorizontalPosition', [primary, secondary]);
-    currentPrimary = secondary;
-    currentSecondary = primary;
+  function swap(list, outer, inner){
+    addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
+    var tmp = list[outer];
+    list[outer] = list[inner];
+    list[inner] = tmp;
   }
 
   return function sort(list, ascending){
     actions = [];
     step = 0;
-    currentPrimary = undefined;
-    currentSecondary = undefined;
 
-    ascending = (ascending === undefined) ? true : ascending;
-    var outer;
-    var inner;
-    var outerMax;
-    var innerMax;
-    for(outer=0, outerMax=list.length-2; outer<=outerMax; outer++){
-      select(list[outer], true);
-      for(inner=outer+1, innerMax=list.length-1; inner<=innerMax; inner++){
-        select(list[inner], false);
+    for(var outer=0; (outer<list.length-1) && select(list[outer], 'primary'); outer++){
+      for(var inner=outer+1; (inner<list.length) && select(list[inner], 'secondary'); inner++){
         step++
         var outOfOrder = (ascending && list[outer]>list[inner]) || (!ascending && list[outer]<list[inner]);
         if(outOfOrder){
-          swap(list[outer], list[inner]);
-          var tmp = list[outer];
-          list[outer] = list[inner];
-          list[inner] = tmp;
+          swap(list, outer, inner);
           step++;
         }
       }
-      deselect(currentSecondary);
       selectSorted(list[outer]);
-      step++
     }
-    deselect(null, 'primary');
-    deselect(null, 'secondary');
-    selectSorted(list[innerMax]);
+    selectSorted(list[list.length-1]);
+    deselect('primary');
+    deselect('secondary');
     return actions;
   }
 });
