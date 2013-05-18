@@ -10,11 +10,16 @@ function(svgController,   constants){
     actions.push(svgController.createAction(step, command, params));
   }
 
-  function deselect(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.colors.default
-    });
+  function deselect(datum, type){
+    // addAction('setColor', {
+    //   datum: datum,
+    //   color: constants.colors.default
+    // });
+    if(type){
+      addAction('deselect', {
+        type: type
+      });
+    }
   }
 
   function select(datum, isPrimary){
@@ -23,10 +28,21 @@ function(svgController,   constants){
       deselect(isPrimary?currentPrimary:currentSecondary);
     }
 
-    addAction('setColor', {
-      datum: datum,
-      color: isPrimary?constants.colors.primary:constants.colors.secondary
-    });
+    if(isPrimary){
+      addAction('select', {
+        datum: datum,
+        type: 'primary'
+      });
+    } else {
+      // addAction('setColor', {
+      //   datum: datum,
+      //   color: isPrimary?constants.colors.primary:constants.colors.secondary
+      // });
+      addAction('select', {
+        datum: datum,
+        type: 'secondary'
+      });
+    }
 
     if(isPrimary){
       currentPrimary = datum;
@@ -79,6 +95,8 @@ function(svgController,   constants){
       selectSorted(list[outer]);
       step++
     }
+    deselect(null, 'primary');
+    deselect(null, 'secondary');
     selectSorted(list[innerMax]);
     return actions;
   }

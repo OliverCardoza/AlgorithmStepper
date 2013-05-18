@@ -29,9 +29,7 @@ function(d3,       _,                constants){
         .attr('x', function(val, i){
           return horizontalPadding/2 + horizontalSpacing/2 + i*elementAndSpaceWidth;
         })
-        .attr('width', function(val){
-          return elementWidth;
-        })
+        .attr('width', elementWidth)
         .attr('y', function(val){
           return svg.attr('height')*(2/3) - val*verticalScalingFactor;
         })
@@ -105,6 +103,31 @@ function(d3,       _,                constants){
       .duration(constants.transitionDuration);
   }
 
+  function select(element, type){
+    var cursor = svg.selectAll('rect#' + type)
+      .data([type]);
+
+    function setup(selection){
+      selection
+        .attr('x', element.attr('x'))
+        .attr('width', element.attr('width'))
+        .attr('y', function(){
+          return Number(element.attr('y'))+Number(element.attr('height'))+10;
+        })
+        .attr('height', 15)
+        .attr('id', type)
+        .style('fill', constants.colors[type]);
+    }
+
+    setup(cursor.transition());
+    setup(cursor.enter().append('rect'));
+  }
+
+  function deselect(type){
+    svg.select('rect#'+type).remove();
+  }
+
+  // TODO: Make actionMap['action']
   function execute(actions){
     _.each(actions, function(action){
       if(action.type === 'setColor'){
@@ -120,6 +143,10 @@ function(d3,       _,                constants){
         setColorAndShift(d3.select('#d'+action.params.datum), action.params.color, action.params.xUnits, action.params.yUnits);
       } else if(action.type === 'shift'){
         shift(d3.select('#d'+action.params.datum), action.params.xUnits, action.params.yUnits);
+      } else if(action.type === 'select'){
+        select(d3.select('#d'+action.params.datum), action.params.type);
+      } else if(action.type === 'deselect'){
+        deselect(action.params.type);
       } else {
         throw new Error('Unknown svg action');
       }
