@@ -52,6 +52,7 @@ function(   _,                constants,        StepController,   algorithmMap) 
 
   // Speed Changer
   var speedInput = document.getElementById('speed');
+  
   // This is fugly but is it worth adding another library?
   speedInput.addEventListener('change', function(e){
     constants.stepInterval = constants.baseStepInterval / e.srcElement.value;
@@ -60,12 +61,11 @@ function(   _,                constants,        StepController,   algorithmMap) 
       controller.changeSpeed();
     }
   }, false);
-  if ("fireEvent" in speedInput)
-      speedInput.fireEvent("onchange");
-  else
-  {
-      var evt = document.createEvent("HTMLEvents");
-      evt.initEvent("change", false, true);
-      speedInput.dispatchEvent(evt);
+  if ("fireEvent" in speedInput) {
+    speedInput.fireEvent("onchange");
+  } else {
+    var evt = document.createEvent("HTMLEvents");
+    evt.initEvent("change", false, true);
+    speedInput.dispatchEvent(evt);
   }
 });
