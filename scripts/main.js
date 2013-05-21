@@ -21,17 +21,17 @@ function(   _,                constants,        StepController,   algorithmMap) 
       pauseButton.removeEventListener('click', controller.pause);
       stopButton.removeEventListener('click', controller.stop);
     }
-    var actions;
+    var steps;
     var dataCopy = data.slice();
     // TODO: add ability for user to input sort parameters (asc/desc to start)
     if(_.has(algorithmMap, algorithm)){
-      actions = algorithmMap[algorithm](dataCopy, true);
+      steps = algorithmMap[algorithm](dataCopy, true);
     } else {
       throw new Error('Bad algorithm name.');
     }
 
     // Potentially also give StepController svgController params (setup width/height and x/y units)
-    controller = new StepController(data, actions);
+    controller = new StepController(data, steps);
     playButton.addEventListener('click', controller.play, false);
     pauseButton.addEventListener('click', controller.pause, false);
     stopButton.addEventListener('click', controller.stop, false);
