@@ -1,4 +1,4 @@
-define(['util/StepBuilder', 'util/constants'],
+define(['step/StepBuilder', 'util/constants'],
 function(StepBuilder,        constants){
   
   // TODO: migrate these into StepBuilder if pertinent or create general API in StepBuilder to utilize

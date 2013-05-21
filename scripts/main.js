@@ -1,4 +1,4 @@
-requirejs(['lib/underscore', 'util/constants', 'StepController', 'algorithmMap'],
+requirejs(['lib/underscore', 'util/constants', 'step/StepController', 'algorithmMap'],
 function(   _,                constants,        StepController,   algorithmMap) {
   // Control Buttons
   var playButton = document.getElementById('play');

@@ -1,5 +1,5 @@
 // TODO: Change structure to only have 1 active timeout live at a time
-define(['lib/underscore', 'util/StepTimer', 'svgController'],
+define(['lib/underscore', 'step/StepTimer', 'svgController'],
 function(_,                StepTimer,        svgController){
   return function StepController(data, steps){
     var stepTimers = [];

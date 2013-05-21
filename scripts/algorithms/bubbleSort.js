@@ -1,4 +1,4 @@
-define(['util/StepBuilder'],
+define(['step/StepBuilder'],
 function(StepBuilder){
   return function sort(list, ascending){
     var sb = new StepBuilder();
