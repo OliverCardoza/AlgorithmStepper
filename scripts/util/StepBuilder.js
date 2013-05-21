@@ -38,6 +38,15 @@ function(svgController,   constants){
       });
     };
 
+    this.selectAllSorted = function(list){
+      while(list.length){
+        addAction('setColor', {
+          datum: list.splice(0, 1),
+          color: constants.colors.sorted
+        })
+      }
+    };
+
     this.swap = function(list, outer, inner){
       addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
       var tmp = list[outer];
