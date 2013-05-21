@@ -6,7 +6,7 @@ function(svgController,   constants){
     var steps = [];
     var currentStep = 0;
 
-    function addAction(action, params){
+    this.addAction = function(action, params){
       if(!steps[currentStep]){
         steps[currentStep] = [];
       }
@@ -18,13 +18,13 @@ function(svgController,   constants){
     };
 
     this.deselect = function(type){
-      addAction('deselect', {
+      this.addAction('deselect', {
         type: type
       });
     };
 
     this.select = function(datum, type){
-      addAction('select', {
+      this.addAction('select', {
         datum: datum,
         type: type
       });
@@ -32,7 +32,7 @@ function(svgController,   constants){
     };
 
     this.selectSorted = function(datum){
-      addAction('setColor', {
+      this.addAction('setColor', {
         datum: datum,
         color: constants.colors.sorted
       });
@@ -40,7 +40,7 @@ function(svgController,   constants){
 
     this.selectAllSorted = function(list){
       while(list.length){
-        addAction('setColor', {
+        this.addAction('setColor', {
           datum: list.splice(0, 1),
           color: constants.colors.sorted
         })
@@ -48,7 +48,7 @@ function(svgController,   constants){
     };
 
     this.swap = function(list, outer, inner){
-      addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
+      this.addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
       var tmp = list[outer];
       list[outer] = list[inner];
       list[inner] = tmp;

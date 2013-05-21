@@ -1,22 +1,17 @@
-define(['svgController', 'util/constants'],
-function(svgController,   constants){
-  var actions;
-  var step;
-
-  function addAction(command, params){
-    actions.push(svgController.createAction(step, command, params));
-  }
-
-  function selectPrimary(datum){
-    addAction('setColorAndShift', {
+define(['util/StepBuilder', 'util/constants'],
+function(StepBuilder,   constants){
+  
+  // TODO: migrate these into StepBuilder if pertinent or create general API in StepBuilder to utilize
+  function selectPrimary(sb, datum){
+    sb.addAction('setColorAndShift', {
       datum: datum,
       color: constants.colors.primary,
       xUnits: 0,
       yUnits: -1
     });
   }
-  function deselectPrimary(datum, unitsToLeft){
-    addAction('setColorAndShift', {
+  function deselectPrimary(sb, datum, unitsToLeft){
+    sb.addAction('setColorAndShift', {
       datum: datum,
       color: constants.colors.sorted,
       xUnits: -1*unitsToLeft,
@@ -24,51 +19,39 @@ function(svgController,   constants){
     });
   }
 
-  function shift(datum){
-    addAction('shift', {
+  function shift(sb, datum){
+    sb.addAction('shift', {
       datum: datum,
       xUnits: 1,
       yUnits: 0
     });
   }
 
-  function selectSorted(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.colors.sorted
-    });
-  }
-
   return function sort(list, ascending){
-    actions = [];
-    step = 0;
+    var sb = new StepBuilder();
 
-    ascending = (ascending === undefined) ? true : ascending;
+    sb.selectSorted(list[0]);
+    sb.incrementStep();
 
-    var outer;
-    var inner;
-    var outerMax;
-
-    selectSorted(list[0]);
-    step++;
-    for(outer=1, outerMax=list.length-1; outer<=outerMax; outer++){
+    for(var outer=1, outerMax=list.length; outer<outerMax; outer++){
       var tmp = list[outer];
-      selectPrimary(tmp);
-      step++;
-      for(inner=outer-1; inner>=0; inner--){
+      selectPrimary(sb, tmp);
+      sb.incrementStep();
+      for(var inner=outer-1; inner>=0; inner--){
+
         var outOfOrder = (ascending && tmp<list[inner]) || (!ascending && tmp>list[inner]);
         if(outOfOrder){
           list[inner+1] = list[inner];
-          shift(list[inner]);
-          step++;
+          shift(sb, list[inner]);
+          sb.incrementStep();
         } else {
           break;
         }
       }
       list[inner+1] = tmp;
-      deselectPrimary(tmp, outer-inner-1);
-      step++;
+      deselectPrimary(sb, tmp, outer-inner-1);
+      sb.incrementStep();
     }
-    return actions;
+    return sb.steps;
   };
 });
