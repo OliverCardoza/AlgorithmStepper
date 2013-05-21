@@ -164,8 +164,8 @@ function(d3,       _,                constants){
     });
   }
 
-  function createAction(step, type, params){
-    return { step: step, type: type, params: params };
+  function createAction(type, params){
+    return { type: type, params: params };
   }
 
   return {
