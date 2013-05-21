@@ -1,7 +1,7 @@
 // TODO: Change structure to only have 1 active timeout live at a time
 define(['lib/underscore', 'util/StepTimer', 'svgController'],
 function(_,                StepTimer,        svgController){
-  return function StepController(data, actions){
+  return function StepController(data, steps){
     var stepTimers = [];
     var self = this;
     var state;
@@ -14,15 +14,6 @@ function(_,                StepTimer,        svgController){
         state = 'run';
       } else if(!state || state === 'stop' || state === 'done'){
         svgController.init(data);
-
-        // refactor after looking up underscore methods
-        var steps = [];
-        _.each(actions, function(action){
-          if(!steps[action.step]){
-            steps[action.step] = [];
-          }
-          steps[action.step].push(action);
-        });
 
         _.each(steps, function(actions, step){
           stepTimers.push(new StepTimer(actions, step));
@@ -70,6 +61,7 @@ function(_,                StepTimer,        svgController){
       }
     }
 
-    actions.push(svgController.createAction(actions[actions.length-1].step, 'end', {done: self.done}));
+    // Add finishing action to last step which clears timers
+    steps[steps.length-1].push(svgController.createAction('end', {done: self.done}));
   };
 });

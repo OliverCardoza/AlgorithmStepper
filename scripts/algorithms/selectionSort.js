@@ -1,56 +1,19 @@
-define(['svgController', 'util/constants'],
-function(svgController,   constants){
-  var actions;
-  var step;
-
-  // TODO below was copypasta'd from bubblesort. need to make this common code
-  // BEGIN COPY PASTA
-  function addAction(command, params){
-    actions.push(svgController.createAction(step, command, params));
-  }
-  function deselect(type){
-    addAction('deselect', {
-      type: type
-    });
-  }
-  function select(datum, type){
-    addAction('select', {
-      datum: datum,
-      type: type
-    });
-    return true;
-  }
-  function selectSorted(datum){
-    addAction('setColor', {
-      datum: datum,
-      color: constants.colors.sorted
-    });
-  }
-  function swap(list, outer, inner){
-    addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
-    var tmp = list[outer];
-    list[outer] = list[inner];
-    list[inner] = tmp;
-  }
-  // END COPY PASTA
-
+define(['util/StepBuilder', 'util/constants'],
+function(StepBuilder,        constants){
   return function sort(list, ascending){
-    // reset variables
-    actions = [];
-    step = 0;
-
+    var sb = new StepBuilder();
     var swapIndex;
 
-    for(var outer=0; (outer<list.length-1) && select(list[outer], 'primary'); outer++){
-      for(var inner=outer+1, swapIndex = outer; (inner<list.length) && select(list[inner], 'secondary'); inner++){
-        step++;
+    for(var outer=0; (outer<list.length-1) && sb.select(list[outer], 'primary'); outer++){
+      for(var inner=outer+1, swapIndex = outer; (inner<list.length) && sb.select(list[inner], 'secondary'); inner++){
+        sb.incrementStep();
 
         var outOfOrder = (ascending && list[swapIndex]>list[inner]) || (!ascending && list[swapIndex]<list[inner]);
         if(outOfOrder){
           // transfer primary select to new max or min
-          select(list[inner], 'primary');
-          deselect('secondary');
-          step++;
+          sb.select(list[inner], 'primary');
+          sb.deselect('secondary');
+          sb.incrementStep();
           swapIndex = inner;
           // edge case to add a step showing primary select on last index
           if(inner===list.length-1){
@@ -59,18 +22,17 @@ function(svgController,   constants){
         }
       }
       // remove secondary select
-      // deselect(currentSecondary);
-      deselect('secondary');
+      sb.deselect('secondary');
       // perform swap if needed
       if(swapIndex !== outer){
-        swap(list, outer, swapIndex);
-        step++;
+        sb.swap(list, outer, swapIndex);
+        sb.incrementStep();
       }
       // mark current index as sorted
-      selectSorted(list[outer]);
-      step++;
+      sb.selectSorted(list[outer]);
+      sb.incrementStep();
     }
-    selectSorted(list[list.length-1]);
-    return actions;
+    sb.selectSorted(list[list.length-1]);
+    return sb.steps;
   };
 });
