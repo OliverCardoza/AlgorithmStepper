@@ -11,6 +11,7 @@ function(StepBuilder,        constants){
         var outOfOrder = (ascending && list[swapIndex]>list[inner]) || (!ascending && list[swapIndex]<list[inner]);
         if(outOfOrder){
           // transfer primary select to new max or min
+          // Alternate action would be to also move secondary cursor ahead one (prevents overlapping cursors)
           sb.select(list[inner], 'primary');
           sb.incrementStep();
           swapIndex = inner;
