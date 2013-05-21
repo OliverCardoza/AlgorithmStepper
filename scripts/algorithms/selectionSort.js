@@ -12,17 +12,13 @@ function(StepBuilder,        constants){
         if(outOfOrder){
           // transfer primary select to new max or min
           sb.select(list[inner], 'primary');
-          sb.deselect('secondary');
           sb.incrementStep();
           swapIndex = inner;
-          // edge case to add a step showing primary select on last index
-          if(inner===list.length-1){
-            // step++;
-          }
         }
       }
       // remove secondary select
       sb.deselect('secondary');
+      sb.incrementStep();
       // perform swap if needed
       if(swapIndex !== outer){
         sb.swap(list, outer, swapIndex);
@@ -32,6 +28,7 @@ function(StepBuilder,        constants){
       sb.selectSorted(list[outer]);
       sb.incrementStep();
     }
+    sb.deselect('primary');
     sb.selectSorted(list[list.length-1]);
     return sb.steps;
   };

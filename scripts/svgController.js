@@ -126,7 +126,8 @@ function(d3,       _,                constants){
         })
         .attr('height', 15)
         .attr('id', params.type)
-        .style('fill', constants.colors[params.type]);
+        .style('fill', constants.colors[params.type])
+        .style('opacity', 0.5);
     }
 
     // TODO: commented line shouldn't cause problems...why does it at high speeds?
