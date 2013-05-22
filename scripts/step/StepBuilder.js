@@ -48,7 +48,7 @@ function(svgController,   constants){
     };
 
     this.swap = function(list, outer, inner){
-      this.addAction('swapColorAndHorizontalPosition', [list[outer], list[inner]]);
+      this.addAction('swapHorizontalPosition', [list[outer], list[inner]]);
       var tmp = list[outer];
       list[outer] = list[inner];
       list[inner] = tmp;
