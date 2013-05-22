@@ -140,14 +140,8 @@ function(d3,       _,                constants){
     svg.select('rect#'+params.type).remove();
   }
 
-  function end(params){
-    // clear action timers
-    params.done();
-  }
-
   var actionMap = {
     deselect: deselect,
-    end: end,
     select: select,
     setColor: setColor,
     setColorAndShift: setColorAndShift,

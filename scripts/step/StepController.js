@@ -1,55 +1,50 @@
-// TODO: Change structure to only have 1 active timeout live at a time
 define(['lib/underscore', 'step/StepTimer', 'svgController'],
 function(_,                StepTimer,        svgController){
   return function StepController(data, steps){
     var stepTimers = [];
+    var currentStep;
     var self = this;
     var state;
 
-    this.play = function(){
-      if(state === 'pause'){
-        _.each(stepTimers, function(timer){
-          timer.resume();
-        });
-        state = 'run';
-      } else if(!state || state === 'stop' || state === 'done'){
-        svgController.init(data);
-
-        _.each(steps, function(actions, step){
-          stepTimers.push(new StepTimer(actions, step));
-        });
-        state = 'run';
+    function nextStep(){
+      currentStep++;
+      if(stepTimers[currentStep]){
+        stepTimers[currentStep].start();
+      } else {
+        state = 'done';
       }
     };
-    
+
+    _.each(steps, function(actions, step){
+      stepTimers.push(new StepTimer(actions, nextStep));
+    });
+
+    this.play = function(){
+      // if in stable idle state
+      if(!state || state === 'stop' || state === 'done'){
+        svgController.init(data);
+
+        currentStep = 0;
+        state = 'run';
+        stepTimers[currentStep].start();
+      } else if(state === 'pause'){
+        state = 'run';
+        stepTimers[currentStep].resume();
+      }
+    };
+
     this.pause = function(){
       if(state === 'run'){
-        _.each(stepTimers, function(timer){
-          timer.pause();
-        });
         state = 'pause';
+        stepTimers[currentStep].pause();
       }
     };
 
     this.stop = function(){
       if(state === 'run' || state === 'pause'){
-        _.each(stepTimers, function(timer){
-          timer.stop();
-        });
-        self.clearTimers();
         state = 'stop';
+        stepTimers[currentStep].stop();
       }
-    };
-
-    this.done = function(){
-      if(state === 'run'){
-        self.clearTimers();
-        state = 'done';
-      }
-    }
-
-    this.clearTimers = function(){
-      stepTimers = [];
     };
 
     // Event handler for when the speed dial is changed
@@ -60,8 +55,5 @@ function(_,                StepTimer,        svgController){
         this.play();
       }
     }
-
-    // Add finishing action to last step which clears timers
-    steps[steps.length-1].push(svgController.createAction('end', {done: self.done}));
   };
 });
