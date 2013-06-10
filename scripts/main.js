@@ -49,6 +49,8 @@ function(   _,                constants,        StepController,   algorithmMap) 
     .addEventListener('click', function(){ setNewAlgorithm('combSort'); }, false);
   document.getElementById('quickSort')
     .addEventListener('click', function(){ setNewAlgorithm('quickSort'); }, false);
+  document.getElementById('mergeSort')
+    .addEventListener('click', function(){ setNewAlgorithm('mergeSort'); }, false);
 
   // Speed Changer
   var speedInput = document.getElementById('speed');
